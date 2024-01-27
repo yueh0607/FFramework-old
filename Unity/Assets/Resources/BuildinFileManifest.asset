@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: BuildinFileManifest
+  m_EditorClassIdentifier: AOT::BuildinFileManifest
+  BuildinFiles:
+  - PackageName: GameLogicPackage
+    FileName: 39c0d15ae179ed533fdb5d925ca7f8b6.rawfile
+    FileCRC32: 5dfd23b0
+  - PackageName: GameLogicPackage
+    FileName: 5a35615ee118ddd86fccc1094758412e.rawfile
+    FileCRC32: 5d13b232
+  - PackageName: GameLogicPackage
+    FileName: 971be7afc18a8b0b05ae70151b0e054f.rawfile
+    FileCRC32: 9d2aba78
+  - PackageName: GameLogicPackage
+    FileName: 989987594bfc12674e47bdf1295bf54c.rawfile
+    FileCRC32: f0a3db19
+  - PackageName: GameLogicPackage
+    FileName: 9d53f355962488a5357026f38e56f3fc.rawfile
+    FileCRC32: 5e1582eb
+  - PackageName: GameLogicPackage
+    FileName: cfe6d78698662c0fa6c1995484130b4e.rawfile
+    FileCRC32: 42d541cc

@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 185f6993d5150494d98da50e26cb1c25, type: 3}
+  m_Name: AssetBundleCollectorSetting
+  m_EditorClassIdentifier: 
+  ShowPackageView: 1
+  ShowEditorAlias: 0
+  UniqueBundleName: 1
+  Packages:
+  - PackageName: GameLogicPackage
+    PackageDesc: "\u6E38\u620F\u903B\u8F91\u4E3B\u5305"
+    EnableAddressable: 1
+    LocationToLower: 0
+    IncludeAssetGUID: 0
+    IgnoreDefaultType: 1
+    AutoCollectShaders: 1
+    Groups:
+    - GroupName: GameLogic
+      GroupDesc: "\u6E38\u620F\u70ED\u66F4\u65B0\u903B\u8F91"
+      AssetTags: BuiltInAssets
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/HotFix/MetaData
+        CollectorGUID: 3ec70fa0cac456a40a5c32082013e0d9
+        CollectorType: 0
+        AddressRuleName: AddressByFolderAndFileName
+        PackRuleName: PackRawFile
+        FilterRuleName: CollectAll
+        AssetTags: MetaDataAssembly
+        UserData: 
+      - CollectPath: Assets/HotFix/HotUpdate
+        CollectorGUID: dcdc8898f5660a94fb6625f6c897bc40
+        CollectorType: 0
+        AddressRuleName: AddressByFolderAndFileName
+        PackRuleName: PackRawFile
+        FilterRuleName: CollectAll
+        AssetTags: HotUpdateAssembly
+        UserData: 
+    - GroupName: GameArts
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/Texutres
+        CollectorGUID: 0f0de9ccd5a45774397da28d3f764351
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectSprite
+        AssetTags: 
+        UserData: 
+  - PackageName: GameArtsPackage
+    PackageDesc: "\u6E38\u620F\u8D44\u6E90\u4E3B\u5305"
+    EnableAddressable: 0
+    LocationToLower: 0
+    IncludeAssetGUID: 0
+    IgnoreDefaultType: 1
+    AutoCollectShaders: 1
+    Groups: []

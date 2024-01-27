@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="..\Unity\Assets\Scripts\FFramework\FFramework.Core\**\*.cs">
+			<Link>FFramework.Core\%(RecursiveDir)%(FileName)%(Extension)</Link>
+		</Compile>
+		<Compile Include="..\Unity\Assets\Scripts\FFramework\FFramework.Share\**\*.cs">
+			<Link>FFramework.Share\%(RecursiveDir)%(FileName)%(Extension)</Link>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="MemoryPack" Version="1.10.0" />
+	  <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
+	  <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="FFramework.Server\Database\" />
+	</ItemGroup>
+
+</Project>

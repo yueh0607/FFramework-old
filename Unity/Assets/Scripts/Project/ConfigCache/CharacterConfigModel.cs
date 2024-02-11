@@ -23,7 +23,7 @@ namespace FFramework.RefCache
     {
         public System.Collections.Generic.List<CharacterConfigItem> Data = new System.Collections.Generic.List<CharacterConfigItem>()
         {
-new CharacterConfigItem(){rotationSensitivityY = 1F,rotationSensitivityX = 1F,maxPitchUp = 85F,maxPitchDown = 85F,moveSpeed = 1F,jumpForce = 1F,groundCheckBox = new UnityEngine.Vector3(1F,1F,1F),groundCheckOffset = new UnityEngine.Vector3(0F,0F,0F)}
+new CharacterConfigItem(){rotationSensitivityY = 1F,rotationSensitivityX = 1F,maxPitchUp = 85F,maxPitchDown = 85F,moveSpeed = 1F,jumpForce = 1F,groundCheckBox = new UnityEngine.Vector3(1F,1F,1F),groundCheckOffset = new UnityEngine.Vector3(0F,1F,0F)}
 
         };
 

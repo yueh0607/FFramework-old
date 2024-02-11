@@ -27,10 +27,22 @@ namespace FFramework.MVVM.RefCache
             currentRotationY = TView.Camera_Camera.transform.localEulerAngles.x;
             TView.Head_Transform.localEulerAngles = TView.Head_Transform.localEulerAngles
                 .SetX(TView.Camera_Camera.transform.localEulerAngles.x);
-            Debug.Log(currentRotationY);
+
+
 
             //启动Update
             this.EnableUpdate();
+
+
+#if UNITY_EDITOR
+            UnityGlobal.MainThread.GizmosUpdateThread.FrameCall += (x) =>
+            {
+                Gizmos.color = Color.gray;
+                Gizmos.DrawCube(TView.transform.position + config.groundCheckOffset, config.groundCheckBox);
+
+            };
+#endif
+
             await FTask.CompletedTask;
         }
 
@@ -57,9 +69,9 @@ namespace FFramework.MVVM.RefCache
             //Debug.Log(currentRotationY); 
 
             //横向旋转角色
-            TView.transform.Rotate(new Vector3(0,mouseX * config.rotationSensitivityX , 0));
+            TView.transform.Rotate(new Vector3(0, mouseX * config.rotationSensitivityX, 0));
             //纵向旋转头和相机
-            TView.Head_Transform.localEulerAngles =  currentRotationY * Vector3.right;
+            TView.Head_Transform.localEulerAngles = currentRotationY * Vector3.right;
             TView.Camera_Camera.transform.localEulerAngles = TView.Head_Transform.localEulerAngles;
 
 
@@ -70,15 +82,15 @@ namespace FFramework.MVVM.RefCache
 
             Vector3 move = TView.transform.right * moveX + TView.transform.forward * moveZ;
             move *= config.moveSpeed;
-            TView.transform.position += move  * deltaTime;
+            TView.transform.position += move * deltaTime;
 
 
             //*****************************************跳跃**********************
 
             DoGroundCheck();
-            if (Input.GetKeyDown(KeyCode.Space)&&isOnGround)
+            if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
             {
-                TView.Player_Rigidbody.AddForce(Vector3.up * config.jumpForce*5, ForceMode.VelocityChange);
+                TView.Player_Rigidbody.AddForce(Vector3.up * config.jumpForce * 5, ForceMode.VelocityChange);
             }
         }
 
@@ -88,13 +100,19 @@ namespace FFramework.MVVM.RefCache
         void DoGroundCheck()
         {
 
-            
-            if(Physics.BoxCast(TView.transform.position+ config.groundCheckOffset,config.groundCheckBox,Vector3.down ))
+            if (Physics.BoxCast(
+                TView.transform.position + config.groundCheckOffset,
+                config.groundCheckBox / 2, Vector3.down, out var hitInfo,
+                TView.transform.rotation, 10, 1 << LayerMask.NameToLayer("Default"),
+                QueryTriggerInteraction.Ignore
+                ))
             {
+                Debug.Log($"在地面={hitInfo.collider?.gameObject?.name}");
                 isOnGround = true;
             }
             else
             {
+                Debug.Log("不在地面");
                 isOnGround = false;
             }
         }

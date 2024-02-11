@@ -22,5 +22,12 @@ public class UnityThread : MonoBehaviour
         FixedUpdateThread.FrameCall?.Invoke(Time.fixedDeltaTime);
     }
 
+#if UNITY_EDITOR
+    public readonly FVirtualThread GizmosUpdateThread = new FVirtualThread();
+    private void OnDrawGizmos()
+    {
+        GizmosUpdateThread.FrameCall?.Invoke(Time.deltaTime);
+    }
+#endif
 
 }

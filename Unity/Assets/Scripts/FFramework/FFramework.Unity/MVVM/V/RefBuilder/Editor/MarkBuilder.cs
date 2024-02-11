@@ -1,4 +1,5 @@
 ﻿using FFramework.FUnityEditor;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +35,9 @@ namespace FFramework.MVVM.UnityEditor
                 className = tar == null ? "----------------------------" : tar.name;
             }
         }
+
+
+
         string path = string.Empty;
         bool increase = false;
         bool part = false;
@@ -122,6 +126,7 @@ namespace FFramework.MVVM.UnityEditor
             autoCreatePath = EditorGUILayout.Toggle("CreatePath", autoCreatePath);
             className = EditorGUILayout.TextField("ClassName", className);
             baseClass = EditorGUILayout.TextField("BaseClass", baseClass);
+            nameSpaceName = EditorGUILayout.TextField("NameSpace", nameSpaceName);
             binderName = EditorGUILayout.TextField("BinderName", binderName);
             //一个物体有多个相同组件时，开启增量生成将使得组件名唯一，但是名字会更长
             increase = EditorGUILayout.Toggle("IncreaseGen", increase);
@@ -159,10 +164,30 @@ namespace FFramework.MVVM.UnityEditor
             {
                 if (GUILayout.Button("Build Target"))
                 {
+                    if (!notVMOverride)
+                    {
+                        if (!EditorUtility.DisplayDialog("ViewModel Override", "Are you sure to override the exist ViewModel?", "Yes", "No"))
+                        {
+                            return;
+                        }
+
+                    }
+
                     BuildTarget();
                 }
                 if (GUILayout.Button("Build In Scene"))
                 {
+
+                    if (!notVMOverride)
+                    {
+                        if (!EditorUtility.DisplayDialog("ViewModel Override", "Are you sure to override the exist ViewModel?", "Yes", "No"))
+                        {
+                            return;
+                        }
+
+                    }
+
+
                     int count = 0;
                     List<GameObject> goes = new List<GameObject>();
                     EditorSceneManager.GetActiveScene().GetRootGameObjects(goes);
@@ -191,6 +216,16 @@ namespace FFramework.MVVM.UnityEditor
                 }
                 if (GUILayout.Button("Build All Prefabs"))
                 {
+                    if (!notVMOverride)
+                    {
+                        if (!EditorUtility.DisplayDialog("ViewModel Override", "Are you sure to override the exist ViewModel?", "Yes", "No"))
+                        {
+                            return;
+                        }
+                        
+                    }
+
+
                     int count = 0;
                     List<GameObject> prefabs = new List<GameObject>();
                     var resourcesPath = Application.dataPath;
@@ -225,11 +260,11 @@ namespace FFramework.MVVM.UnityEditor
 
         void Build(string buildPath, GameObject buildTarget, string _namespace, string _class, bool increase, bool part)
         {
-           
+
             try
             {
                 //生成容器
-              List<string> buildField = new List<string>();
+                List<string> buildField = new List<string>();
                 List<string> buildInit = new List<string>();
 
                 List<ScriptMark> marks = GetMarks(buildTarget);
@@ -254,7 +289,7 @@ namespace FFramework.MVVM.UnityEditor
                     buildField.Add(componentFiled);
                     string componentInit = string.Empty;
 
-                  
+
 
 
 
@@ -329,7 +364,7 @@ namespace FFramework.MVVM.UnityEditor
  * UVersion : #VERSION#
  *******************************************************/
 using UnityEngine;
-using FFramework.MVC;
+using FFramework.MVVM;
 
 namespace #NAMESPACE#
 {
@@ -369,9 +404,14 @@ namespace #NAMESPACE#
 
                 if (generateViewModel)
                 {
-                    string scriptName = buildTarget.name + "VM";
-                    string absVMPath = Path.Combine(EditorHelper.ProjectPath, vmGenPath,scriptName+".cs");
-                    BuildVM(absVMPath, scriptName, "FFramework.MVVM.ViewModel", buildTarget.name, _namespace);
+                    
+                    string originGameObjectName = buildTarget.gameObject.name;
+                    string pattern = "[^a-zA-Z0-9_\u4e00-\u9fa5]";
+                    string gameObjectName = Regex.Replace(originGameObjectName, pattern, "_");
+
+                    string scriptName =gameObjectName + "VM";
+                    string absVMPath = Path.Combine(EditorHelper.ProjectPath, vmGenPath, scriptName + ".cs");
+                    BuildVM(absVMPath, scriptName, "FFramework.MVVM.ViewModel", gameObjectName, _namespace);
                 }
 
             }
@@ -392,6 +432,8 @@ namespace #NAMESPACE#
         void BuildVM(string buildPath, string name, string vmName, string refName, string _namespace)
         {
             if (File.Exists(buildPath) && notVMOverride) return;
+          
+
             string model =
 @"
 /*******************************************************
@@ -399,18 +441,21 @@ namespace #NAMESPACE#
  * DateTime : #DATETIME#
  * UVersion : #VERSION#
  *******************************************************/
+using FFramework;
+using FFramework.MVVM;
+
 namespace #NAMESPACE#
 {
     public class #CLASSNAME# : #VMNAME#<#REFNAME#>
     {
         //Select Text And Press Ctrl + K + U to uncomment.
 
-        //public override void OnLoad()
+        //public override async FTask OnLoad()
         //{
             //await FTask.CompletedTask;
         //}
 
-        //public override void OnUnload()
+        //public override async FTask OnUnload()
         //{
             //await FTask.CompletedTask;
         //}
@@ -428,7 +473,7 @@ namespace #NAMESPACE#
 
             EditorHelper.NotExistCreate(buildPath);
 
-            using (StreamWriter writer  = new StreamWriter(buildPath))
+            using (StreamWriter writer = new StreamWriter(buildPath))
             {
                 writer.Write(model);
             }

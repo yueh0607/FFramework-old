@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 namespace FFramework.MVVM.UnityEditor
@@ -6,7 +7,7 @@ namespace FFramework.MVVM.UnityEditor
     [FilePath("FFramework/RefBuilderSettings.asset", FilePathAttribute.Location.PreferencesFolder)]
     public class RefBuilderSettings : ScriptableSingleton<RefBuilderSettings>
     {
-        public string defaultNameSpace = "FFramework.MVC.RefCache";
+        public string defaultNameSpace = "FFramework.MVVM.RefCache";
         public string defaultPath = "Assets/Scripts/Project/RefCache";
         public bool increase = false;
         public bool part = false;

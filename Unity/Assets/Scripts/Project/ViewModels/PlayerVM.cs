@@ -9,9 +9,9 @@ using FFramework.RefCache;
 using System;
 using UnityEngine;
 
-namespace FFramework.MVC.RefCache
+namespace FFramework.MVVM.RefCache
 {
-    public class PlayerVM : ViewModel<FFramework.MVC.RefCache.Player>, IUpdate
+    public class PlayerVM : ViewModel<FFramework.MVVM.RefCache.Player>, IUpdate
     {
 
         CharacterConfigItem config;
@@ -42,22 +42,61 @@ namespace FFramework.MVC.RefCache
             await FTask.CompletedTask;
         }
 
-
+        //当前角色头的Y旋转角度
         float currentRotationY;
+        bool isOnGround = false;
+
         void IUpdate.Update(float deltaTime)
         {
+            //********************************旋转*************************
             float mouseX = Input.GetAxis("Mouse X");
             float mouseY = Input.GetAxis("Mouse Y");
 
-            currentRotationY -= mouseY * config.rotationSensitivity;
+            currentRotationY -= mouseY * config.rotationSensitivityX;
             currentRotationY = Math.Clamp(currentRotationY, -config.maxPitchDown, config.maxPitchUp);
-            Debug.Log(currentRotationY); 
+            //Debug.Log(currentRotationY); 
 
             //横向旋转角色
-            TView.transform.Rotate(new Vector3(0,mouseX , 0));
+            TView.transform.Rotate(new Vector3(0,mouseX * config.rotationSensitivityX , 0));
             //纵向旋转头和相机
             TView.Head_Transform.localEulerAngles =  currentRotationY * Vector3.right;
             TView.Camera_Camera.transform.localEulerAngles = TView.Head_Transform.localEulerAngles;
+
+
+            //******************************************移动********************
+
+            float moveX = Input.GetAxis("Horizontal");
+            float moveZ = Input.GetAxis("Vertical");
+
+            Vector3 move = TView.transform.right * moveX + TView.transform.forward * moveZ;
+            move *= config.moveSpeed;
+            TView.transform.position += move  * deltaTime;
+
+
+            //*****************************************跳跃**********************
+
+            DoGroundCheck();
+            if (Input.GetKeyDown(KeyCode.Space)&&isOnGround)
+            {
+                TView.Player_Rigidbody.AddForce(Vector3.up * config.jumpForce*5, ForceMode.VelocityChange);
+            }
+        }
+
+        /// <summary>
+        /// 进行地面检查
+        /// </summary>
+        void DoGroundCheck()
+        {
+
+            
+            if(Physics.BoxCast(TView.transform.position+ config.groundCheckOffset,config.groundCheckBox,Vector3.down ))
+            {
+                isOnGround = true;
+            }
+            else
+            {
+                isOnGround = false;
+            }
         }
     }
 }

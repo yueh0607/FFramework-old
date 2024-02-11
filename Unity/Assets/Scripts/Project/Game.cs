@@ -1,6 +1,7 @@
 using FFramework;
 using FFramework.MVC.RefCache;
 using FFramework.MVVM;
+using FFramework.MVVM.RefCache;
 using FFramework.MVVM.UI;
 using UnityEngine;
 using YooAsset;

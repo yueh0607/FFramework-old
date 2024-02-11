@@ -21,7 +21,9 @@ namespace FFramework.MVVM
         /// <returns></returns>
         public virtual async FTask OnLoad()
         {
+            Debug.Log("ViewModel OnLoad1");
             await FTask.CompletedTask;
+            Debug.Log("ViewModel OnLoad2");
         }
 
 

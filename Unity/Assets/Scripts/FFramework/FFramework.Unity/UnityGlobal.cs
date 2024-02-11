@@ -7,10 +7,10 @@ namespace FFramework
 {
     public class EntryPoint
     {
-        public static void Main(ContextMachine machine)
+        public static void Main()
         {
             Debug.Log($"热更程序集入口调用: {nameof(FFramework.EntryPoint.Main)}");
-            FTaskToken.ErrorHandler += (x) => x.Throw();
+            FTaskToken.ErrorHandler = (x) => x.Throw();
             UnityGlobal.GameAwake().Coroutine();
         }
     }
@@ -28,7 +28,8 @@ public class UnityGlobal
         {
             mainThread = GameEntry.Current.gameObject.AddComponent<UnityThread>();
             await Game.Initialize();
-            Game.Process(mainThread).Forget();
+            Debug.Log("Ori");
+            Game.Process(mainThread).Coroutine();
             initialized = true;
         }
     }

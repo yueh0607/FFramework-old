@@ -53,7 +53,7 @@ MonoBehaviour:
     IgnoreDefaultType: 1
     AutoCollectShaders: 1
     Groups:
-    - GroupName: Arts
+    - GroupName: Prefabs
       GroupDesc: 
       AssetTags: 
       ActiveRuleName: EnableGroup
@@ -63,6 +63,30 @@ MonoBehaviour:
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackDirectory
-        FilterRuleName: CollectAll
+        FilterRuleName: CollectPrefab
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/Arts/Prefabs/MapZone
+        CollectorGUID: f7c9cedaea9b9914fbff5440ec09d3e2
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectPrefab
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/Arts/Prefabs/Entity
+        CollectorGUID: 62bf2a2c394f6e941bc48780118b7b2c
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectPrefab
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/Arts/Prefabs/Global
+        CollectorGUID: d413c5d463d71824d8827b43e26c36a3
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectPrefab
         AssetTags: 
         UserData: 

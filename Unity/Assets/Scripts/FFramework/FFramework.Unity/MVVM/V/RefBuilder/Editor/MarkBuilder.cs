@@ -43,18 +43,22 @@ namespace FFramework.MVVM.UnityEditor
         private string binderName = "BindableProperty";
         bool awakeInit = false;
         string baseClass = "FFramework.MVVM.View";
-
+        bool generateViewModel = false;
+        string vmGenPath = "";
+        bool notVMOverride = true;
         private void OnEnable()
         {
-
             path = RefBuilderSettings.instance.defaultPath;
             increase = RefBuilderSettings.instance.increase;
             part = RefBuilderSettings.instance.part;
             nameSpaceName = RefBuilderSettings.instance.defaultNameSpace;
             autoCreatePath = RefBuilderSettings.instance.autoCreatePath;
-            awakeInit = RefBuilderSettings.instance.awakrInit;
+            awakeInit = RefBuilderSettings.instance.awakeInit;
             baseClass = RefBuilderSettings.instance.baseClass;
             binderName = RefBuilderSettings.instance.binderName;
+            generateViewModel = RefBuilderSettings.instance.generateViewModel;
+            vmGenPath = RefBuilderSettings.instance.viewModelPath;
+            notVMOverride = RefBuilderSettings.instance.notVMOverride;
         }
         private void OnDisable()
         {
@@ -63,9 +67,12 @@ namespace FFramework.MVVM.UnityEditor
             RefBuilderSettings.instance.part = part;
             RefBuilderSettings.instance.defaultNameSpace = nameSpaceName;
             RefBuilderSettings.instance.autoCreatePath = autoCreatePath;
-            RefBuilderSettings.instance.awakrInit = awakeInit;
+            RefBuilderSettings.instance.awakeInit = awakeInit;
             RefBuilderSettings.instance.baseClass = baseClass;
             RefBuilderSettings.instance.binderName = binderName;
+            RefBuilderSettings.instance.generateViewModel = generateViewModel;
+            RefBuilderSettings.instance.viewModelPath = vmGenPath;
+            RefBuilderSettings.instance.notVMOverride = notVMOverride;
 
             RefBuilderSettings.instance.Modify();
             EditorUtility.SetDirty(RefBuilderSettings.instance);
@@ -122,6 +129,12 @@ namespace FFramework.MVVM.UnityEditor
             part = EditorGUILayout.Toggle("Partial", part);
             //表明是否生成Awake自动调用
             awakeInit = EditorGUILayout.Toggle("AwakeInit", awakeInit);
+            generateViewModel = EditorGUILayout.Toggle("GenerateViewModel", generateViewModel);
+            if (generateViewModel)
+            {
+                vmGenPath = EditorGUILayout.TextField("ViewModelPath", vmGenPath);
+                notVMOverride = EditorGUILayout.Toggle("ViewModelNotOverride", notVMOverride);
+            }
 
 
 
@@ -189,7 +202,7 @@ namespace FFramework.MVVM.UnityEditor
                         string path = "Assets" + absolutePaths[i].Remove(0, resourcesPath.Length);
                         path = path.Replace("\\", "/");
                         GameObject prefab = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
-                        if (prefab != null && prefab.GetComponent<ScriptMark>() != null)
+                        if (prefab != null && GetMarks(prefab).Count > 0)
                             prefabs.Add(prefab);
                     }
                     for (int i = 0; i < prefabs.Count; i++)
@@ -212,10 +225,11 @@ namespace FFramework.MVVM.UnityEditor
 
         void Build(string buildPath, GameObject buildTarget, string _namespace, string _class, bool increase, bool part)
         {
+           
             try
             {
                 //生成容器
-                List<string> buildField = new List<string>();
+              List<string> buildField = new List<string>();
                 List<string> buildInit = new List<string>();
 
                 List<ScriptMark> marks = GetMarks(buildTarget);
@@ -240,6 +254,10 @@ namespace FFramework.MVVM.UnityEditor
                     buildField.Add(componentFiled);
                     string componentInit = string.Empty;
 
+                  
+
+
+
                     //逻辑生成分类
                     if (mark.buildTarget.gameObject == buildTarget)
                     {
@@ -250,10 +268,21 @@ namespace FFramework.MVVM.UnityEditor
                     }
                     else
                     {
+                        //当前ScriptMark的Transform组件
+                        Transform cur = com.transform;
+                        string findPath = cur.gameObject.name;
+                        //如果当前不是第一层子物体，则构建物体路径
+                        while (cur.parent.gameObject != buildTarget.gameObject)
+                        {
+                            findPath = $"{cur.parent.gameObject.name}/" + findPath;
+                            cur = cur.parent;
+                        }
+
+
                         //组件初始化
                         componentInit = increase ?
-                            $"@{gameObjectName}_{com.GetType().Name}_{index} = transform.Find(@\"{originGameObjectName}\").GetComponent<{com.GetType().FullName}>();" :
-                            $"@{gameObjectName}_{com.GetType().Name} = transform.Find(@\"{originGameObjectName}\").GetComponent<{com.GetType().FullName}>();";
+                            $"@{gameObjectName}_{com.GetType().Name}_{index} = transform.Find(@\"{findPath}\").GetComponent<{com.GetType().FullName}>();" :
+                            $"@{gameObjectName}_{com.GetType().Name} = transform.Find(@\"{findPath}\").GetComponent<{com.GetType().FullName}>();";
                     }
                     buildInit.Add(componentInit);
                     foreach (string property in properties)
@@ -337,6 +366,14 @@ namespace #NAMESPACE#
                     writer.Write(model);
 
                 }
+
+                if (generateViewModel)
+                {
+                    string scriptName = buildTarget.name + "VM";
+                    string absVMPath = Path.Combine(EditorHelper.ProjectPath, vmGenPath,scriptName+".cs");
+                    BuildVM(absVMPath, scriptName, "FFramework.MVVM.ViewModel", buildTarget.name, _namespace);
+                }
+
             }
             catch (Exception e)
             {
@@ -345,6 +382,57 @@ namespace #NAMESPACE#
             }
         }
 
+        /// <summary>
+        /// 生成ViewModel
+        /// </summary>
+        /// <param name="buildPath">生成路径</param>
+        /// <param name="name">类名</param>
+        /// <param name="vmName">vm类名</param>
+        /// <param name="refName">View名</param>
+        void BuildVM(string buildPath, string name, string vmName, string refName, string _namespace)
+        {
+            if (File.Exists(buildPath) && notVMOverride) return;
+            string model =
+@"
+/*******************************************************
+ * Code Generated By FFramework
+ * DateTime : #DATETIME#
+ * UVersion : #VERSION#
+ *******************************************************/
+namespace #NAMESPACE#
+{
+    public class #CLASSNAME# : #VMNAME#<#REFNAME#>
+    {
+        //Select Text And Press Ctrl + K + U to uncomment.
+
+        //public override void OnLoad()
+        //{
+            //await FTask.CompletedTask;
+        //}
+
+        //public override void OnUnload()
+        //{
+            //await FTask.CompletedTask;
+        //}
+    }
+}
+
+";
+            model = model
+                .Replace("#DATETIME#", DateTime.Now.ToString())
+                .Replace("#VERSION#", Application.unityVersion.ToString())
+                .Replace("#CLASSNAME#", name)
+                .Replace("#VMNAME#", vmName)
+                .Replace("#REFNAME#", _namespace + "." + refName)
+                .Replace("#NAMESPACE#", _namespace);
+
+            EditorHelper.NotExistCreate(buildPath);
+
+            using (StreamWriter writer  = new StreamWriter(buildPath))
+            {
+                writer.Write(model);
+            }
+        }
 
         List<ScriptMark> GetMarks(GameObject gameObject)
         {

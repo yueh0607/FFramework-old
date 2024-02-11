@@ -15,6 +15,7 @@ public class Game
     /// <returns></returns>
     public static async FTask Initialize()
     {
+        
         //初始化YooAsset
         ResourcePackage defaultPackage = YooAssets.CreatePackage("GameArts");
         YooAssets.SetDefaultPackage(defaultPackage);
@@ -30,14 +31,12 @@ public class Game
         await defaultPackage.InitializeAsync(initParameters);
         Debug.Log($"GameArts 资源包初始化状态: {defaultPackage.InitializeStatus}");
 
-        MVVM.Package = defaultPackage;
-        MVVM.LoadConverter = (type) => type.Name;
+        MV.Package = defaultPackage;
+        MV.LoadConverter = (type) => type.Name;
         Debug.Log("MVVM初始化完成");
 
-        await UI.Show<MainMenuVM, MainMenuPanel>();
-
         await FTask.CompletedTask;
-    } 
+    }
 
     /// <summary>
     /// 过程（一定会在初始化后执行）
@@ -46,7 +45,13 @@ public class Game
     /// <returns></returns>
     public static async FTask Process(UnityThread thread)
     {
-     
+        Debug.Log("GameProcess");
+        var map = await MV.Load<MapVM, Map>();
+        var player = await MV.Load<PlayerVM, Player>();
+        player.TView.Player_Transform.position = map.TView.transform.position + Vector3.up;
+        
+
+
         await FTask.CompletedTask;
     }
 }

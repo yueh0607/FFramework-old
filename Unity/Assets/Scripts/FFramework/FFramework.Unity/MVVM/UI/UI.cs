@@ -28,7 +28,7 @@ namespace FFramework.MVVM.UI
             }
             else
             {
-                viewModel = await MVVM.Load<T, K>();
+                viewModel = await MV.Load<T, K>();
                 panels.Add(typeof(T), viewModel);
             }
             return viewModel;
@@ -40,7 +40,8 @@ namespace FFramework.MVVM.UI
         public static async FTask Show<T,K>() where T :class, IUIPanel<K>, new() where K : View
         {
             T viewModel = await GetPanel<T,K>(); 
-            await viewModel.Show();  
+            await viewModel.Show();
+            Debug.Log("Sho");
         }
 
        
@@ -61,7 +62,7 @@ namespace FFramework.MVVM.UI
         /// <returns></returns>
         public static async FTask Unload<T, K>() where T : class, IUIPanel<K>, new() where K : View
         {
-            await MVVM.Unload<T>(await GetPanel<T, K>());
+            await MV.Unload<T>(await GetPanel<T, K>());
             panels.Remove(typeof(T));
         }
     }

@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace FFramework
 {
-    [AsyncMethodBuilder(typeof(FTaskCompletedMethodBuilder))]
     public struct FTaskCompleted : ICriticalNotifyCompletion
     {
         [DebuggerHidden]
@@ -12,7 +11,7 @@ namespace FFramework
         {
             return this;
         }
-
+  
         [DebuggerHidden]
         public readonly bool IsCompleted => true;
 
@@ -24,11 +23,13 @@ namespace FFramework
         [DebuggerHidden]
         public readonly void OnCompleted(Action continuation)
         {
+            //UnsafeOnCompleted(continuation);
         }
 
         [DebuggerHidden]
         public readonly void UnsafeOnCompleted(Action continuation)
         {
+            //continuation?.Invoke();
         }
     }
 }

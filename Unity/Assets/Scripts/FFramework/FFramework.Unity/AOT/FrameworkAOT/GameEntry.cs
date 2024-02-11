@@ -28,25 +28,6 @@ public class GameEntry : MonoBehaviour
 
 
     /// <summary>
-    /// 更新状态机
-    /// </summary>
-    ContextMachine machine = new ContextMachine(
-        (assembly) =>
-        assembly?.GetType(AOTConfig.EntryPointClass)?.GetMethod(AOTConfig.StaticEntryMethod, BindingFlags.Public | BindingFlags.Static));
-
-    bool canReload = false;
-
-    /// <summary>
-    /// 上下文状态机，谨慎操作
-    /// </summary>
-    public ContextMachine Machine => machine;
-
-    void Update()
-    {
-        machine.UpdateMachine();
-    }
-
-    /// <summary>
     /// 加载DLL
     /// </summary>
     /// <returns></returns>
@@ -55,10 +36,14 @@ public class GameEntry : MonoBehaviour
         Debug.Log("准备加载上下文..");
 
 #if FF_SIMULATED
+        int entryCount = 0;
         foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
-            machine.GetEntry?.Invoke(assembly)?.Invoke(null,new object[] { machine });
+            MethodInfo method = assembly.GetType(AOTConfig.EntryPointClass,false)?.GetMethod(AOTConfig.StaticEntryMethod, BindingFlags.Public | BindingFlags.Static);
+            method?.Invoke(null, null);
+            if (method != null) entryCount++;
         }
+        Debug.Log($"找到入口: {entryCount}");
         yield break;
         
 #elif FF_OFFLINE || FF_HOST
@@ -78,7 +63,7 @@ public class GameEntry : MonoBehaviour
         Debug.Log($"补充元数据完毕! 元数据程序集数量={metaDataAssetInfos.Length}");
 
 
-        
+        List<Assembly> hotUpdateAssemblies = new List<Assembly>();
         //加载热更新程序集
         AssetInfo[] hotUpdateAssetInfos = package.GetAssetInfos(AOTConfig.HotUpdateDllBytesTag);
         foreach (var aotDll in hotUpdateAssetInfos)
@@ -86,17 +71,29 @@ public class GameEntry : MonoBehaviour
             var handle = package.LoadRawFileAsync(aotDll);
             yield return handle;
             var data = handle.GetRawFileData();
-            machine.LoadAssemblyToNextContext(data);
+            hotUpdateAssemblies.Add(Assembly.Load(data));
             handle.Dispose();
         }
 
-        if(hotUpdateAssetInfos.Length==0)
+        if (hotUpdateAssetInfos.Length == 0)
         {
             Debug.LogError("无任何热更新程序集(dll.bytes)资源!!!");
             yield break;
-        }    
+        }
+        else Debug.Log($"加载热更程序集完毕... 热更新程序集数量={hotUpdateAssetInfos.Length}");
 
-        Debug.Log($"加载热更程序集到后台上下文完毕... 热更新程序集数量={hotUpdateAssetInfos.Length}");
+        int entryCount = 0;
+
+        //入口调用
+        for (int i = 0; i < hotUpdateAssemblies.Count; i++)
+        {
+            MethodInfo method = hotUpdateAssemblies[i].GetType(AOTConfig.EntryPointClass).GetMethod(AOTConfig.StaticEntryMethod, BindingFlags.Public | BindingFlags.Static);
+            entryCount += (method != null) ? 1 : 0;
+
+            method?.Invoke(null, null);
+        }
+
+        Debug.Log($"找到入口: {entryCount}");
 
 #endif
     }
@@ -117,7 +114,7 @@ public class GameEntry : MonoBehaviour
 #elif FF_OFFLINE||FF_HOST   //不需要热更资源
         var initParameters = new OfflinePlayModeParameters();
 #endif
- 
+
         var initOperation = gameLogic.InitializeAsync(initParameters);
         yield return initOperation;
 
@@ -137,13 +134,14 @@ public class GameEntry : MonoBehaviour
         //销毁资源包缓存，在热更程序集可以进行重新加载
         YooAssets.DestroyPackage(AOTConfig.GameLogicPackageName);
 #if FF_OFFLINE||FF_HOST
-        Debug.Log("切换状态机上下文...");
-        machine.MoveNext();
-        yield return new WaitUntil(() => machine.NeedRefresh == 0);
+
 #if UNITY_EDITOR
         watch.Stop();
-#endif
         Debug.Log($"热更程序集加载完毕： 耗时={watch.Elapsed.TotalSeconds}s");
+#else
+        Debug.Log($"热更程序集加载完毕");
+#endif
+
 #endif
 
     }
@@ -166,7 +164,7 @@ public class GameEntry : MonoBehaviour
     {
         if (!initialized)
         {
-            
+
 #if UNITY_EDITOR
             watch.Start();
 #endif

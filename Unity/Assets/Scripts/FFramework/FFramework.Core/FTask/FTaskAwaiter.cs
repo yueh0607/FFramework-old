@@ -50,7 +50,7 @@ namespace FFramework
         [DebuggerHidden]
         public void GetResult()
         {
-
+            Pool.Set<FTask, FTask.FTaskPoolable>(task);
         }
 
         /// <summary>
@@ -60,10 +60,9 @@ namespace FFramework
         public void SetResult()
         {
             isCompleted = true;
-            continuation?.Invoke();
             if (task.Token != null)
                 ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
-            Pool.Set<FTask, FTask.FTaskPoolable>(task);
+            continuation?.Invoke();
         }
 
         /// <summary>
@@ -76,6 +75,7 @@ namespace FFramework
             ExceptionDispatchInfo e = ExceptionDispatchInfo.Capture(exception);
             if (task.Token != null)
                 ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Faulted, e);
+            else FTaskToken.ErrorHandler?.Invoke(e);
         }
         /// <summary>
         /// 设置任务结果为取消并完成
@@ -165,7 +165,9 @@ namespace FFramework
         [DebuggerHidden]
         public T GetResult()
         {
-            return result;
+            T resultLocal = this.result;
+            Pool.Set<FTask<T>, FTask<T>.FTaskPoolable>(task);
+            return resultLocal;
         }
 
         /// <summary>
@@ -176,10 +178,10 @@ namespace FFramework
         {
             this.result = result;
             isCompleted = true;
-            continuation?.Invoke();
             if (task.Token != null)
                 ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
-            Pool.Set<FTask<T>, FTask<T>.FTaskPoolable>(task);
+            continuation?.Invoke();
+
         }
 
         /// <summary>
@@ -192,6 +194,7 @@ namespace FFramework
             ExceptionDispatchInfo e = ExceptionDispatchInfo.Capture(exception);
             if (task.Token != null)
                 ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Faulted, e);
+            else FTaskToken.ErrorHandler?.Invoke(e);
         }
         /// <summary>
         /// 设置任务结果为取消并完成

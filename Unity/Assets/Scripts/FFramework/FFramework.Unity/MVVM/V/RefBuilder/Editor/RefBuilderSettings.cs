@@ -11,9 +11,12 @@ namespace FFramework.MVVM.UnityEditor
         public bool increase = false;
         public bool part = false;
         public bool autoCreatePath = true;
-        public bool awakrInit = false;
+        public bool awakeInit = false;
         public string baseClass = "FFramework.MVVM.View";
         public string binderName = "FFramework.MVVM.BindableProperty";
+        public bool generateViewModel = false;
+        public string viewModelPath = "Assets/Scripts/Project/ViewModels";
+        public bool notVMOverride = true;
         public void Modify()
         {
             Save(true);

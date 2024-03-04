@@ -15,7 +15,7 @@ namespace FFramework.MVVM.RefCache
     {
 
         CharacterConfigItem config;
-
+        PlayerModel player;
         public async override FTask OnLoad()
         {
             TView.InitRefs();
@@ -28,7 +28,7 @@ namespace FFramework.MVVM.RefCache
             TView.Head_Transform.localEulerAngles = TView.Head_Transform.localEulerAngles
                 .SetX(TView.Camera_Camera.transform.localEulerAngles.x);
 
-
+            
 
             //启动Update
             this.EnableUpdate();
@@ -84,6 +84,11 @@ namespace FFramework.MVVM.RefCache
             move *= config.moveSpeed;
             TView.transform.position += move * deltaTime;
 
+            //更新数据位置
+            var pos = TView.transform.position;
+            MV.GetModel<PlayerModel>().Position.Value = new Vector3Int((int)pos.x,(int)pos.y,(int)pos.z);
+
+            
 
             //*****************************************跳跃**********************
 
@@ -107,12 +112,12 @@ namespace FFramework.MVVM.RefCache
                 QueryTriggerInteraction.Ignore
                 ))
             {
-                Debug.Log($"在地面={hitInfo.collider?.gameObject?.name}");
+                //Debug.Log($"在地面={hitInfo.collider?.gameObject?.name}");
                 isOnGround = true;
             }
             else
             {
-                Debug.Log("不在地面");
+                //Debug.Log("不在地面");
                 isOnGround = false;
             }
         }

@@ -1,5 +1,7 @@
 ﻿{
     "generatePath": "Assets/Scripts/Project/ConfigCache/",
     "originPath": "ExcelConfig/",
-    "ignoreFileName": []
+    "ignoreFileName": [
+        "ExcelConfig\\PropList.xlsx"
+    ]
 }

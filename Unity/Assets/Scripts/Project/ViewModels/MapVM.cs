@@ -6,22 +6,26 @@
  *******************************************************/
 using FFramework;
 using FFramework.MVVM;
+using FFramework.RefCache;
+using UnityEngine;
+using YooAsset;
 
 namespace FFramework.MVVM.RefCache
 {
     public class MapVM : FFramework.MVVM.ViewModel<FFramework.MVVM.RefCache.Map>
     {
-        //Select Text And Press Ctrl + K + U to uncomment.
+ 
+      
+        public override async FTask OnLoad()
+        {
+            TView.InitRefs();
+            await FTask.CompletedTask;
+        }
 
-        //public override async FTask OnLoad()
-        //{
-            //await FTask.CompletedTask;
-        //}
-
-        //public override async FTask OnUnload()
-        //{
-            //await FTask.CompletedTask;
-        //}
+        public override async FTask OnUnload()
+        {
+            await FTask.CompletedTask;
+        }
     }
 }
 

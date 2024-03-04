@@ -108,7 +108,7 @@ namespace FFramework.MVVM
             //检查预制体资源句柄
             if (!prefabCache.ContainsKey(typeof(TView)))
             {
-                prefabCache.Add(typeof(TView), Package.LoadAssetAsync(LoadConverter(typeof(TView))));
+                 prefabCache.Add(typeof(TView), Package.LoadAssetAsync(LoadConverter(typeof(TView))));
             }
             var handle = prefabCache[typeof(TView)];
 

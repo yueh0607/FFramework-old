@@ -18,13 +18,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="MemoryPack" Version="1.10.0" />
-	  <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
-	  <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+	  <Compile Remove="FFramework.Server\**" />
+	  <EmbeddedResource Remove="FFramework.Server\**" />
+	  <None Remove="FFramework.Server\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="FFramework.Server\Database\" />
+	  <PackageReference Include="MemoryPack" Version="1.10.0" />
+	  <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
+	  <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
 	</ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@ namespace FFramework.MVVM.UnityEditor
     [ExcelTypeSyntax("bool", typeof(BooleanSyntaxAnalyser))]
     public class BooleanSyntaxAnalyser : ISyntaxAnalyser
     {
-        public string GetDynamicTrueType(Dictionary<string, string> parameters) => "System.Boolean[]";
+        public string GetDynamicTrueType(Dictionary<string, string> parameters) => "System.Boolean";
         public object StringToValue(string str, string type, int row, int column, string key, Dictionary<string, string> parameters)
         {
             str = str.Replace(" ","");
@@ -32,6 +32,7 @@ namespace FFramework.MVVM.UnityEditor
             string[] parts = str.Split(seps);
 
             StringBuilder builder = new StringBuilder();
+            builder.Append("{");
             foreach (var part in parts)
             {
                 if (str == "1" || str == "true" || str == "True" || str == "TRUE") builder.Append("true,");

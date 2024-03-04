@@ -90,3 +90,24 @@ MonoBehaviour:
         FilterRuleName: CollectPrefab
         AssetTags: 
         UserData: 
+    - GroupName: Mats
+      GroupDesc: "\u65B9\u5757\u6750\u8D28"
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/Arts/BlocksMaterial
+        CollectorGUID: c6e37b2843718b641b4b0e5a39de0aa0
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectMaterials
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/Arts/Prefabs/Blocks
+        CollectorGUID: 6e7239a78ca94294291ba7a5a83cab2d
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectPrefab
+        AssetTags: 
+        UserData: 

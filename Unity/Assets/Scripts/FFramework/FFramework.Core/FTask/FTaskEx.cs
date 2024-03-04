@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -86,6 +87,47 @@ namespace FFramework
             var tween = Pool.Get<FTween<T>, FTween<T>.FTweenPoolable>();
             FTask task = Pool.Get<FTask, FTask.FTaskPoolable>();
             tween.StartCross(start, end, duration, lerper, task, process);
+            return task;
+        }
+        /// <summary>
+        /// 等待判别式为true
+        /// </summary>
+        /// <param name="judge"></param>
+        /// <returns></returns>
+        public static FTask Until(Func<bool> judge)
+        {
+            UntilPromise promise = Pool.Get<UntilPromise, UntilPromise.UntilPromisePoolable>();
+            FTask task = Pool.Get<FTask, FTask.FTaskPoolable>();
+
+            promise.UntilCall(task, judge);
+            return task;
+        }
+        /// <summary>
+        /// 等待全部完成
+        /// </summary>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+        public static FTask WaitAll(List<FTask> tasks)
+        {
+            CombinePromise promise = Pool.Get<CombinePromise, CombinePromise.CombinePromisePoolable>();
+            FTask task = Pool.Get<FTask, FTask.FTaskPoolable>();
+
+            promise.CombineCall(task, tasks,tasks.Count);
+            return task;
+        }
+        /// <summary>
+        /// 等待任何一个完成
+        /// </summary>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static FTask WaitAny(List<FTask> tasks)
+        {
+            if (tasks.Count == 0) throw new InvalidOperationException("Wait any count=0");
+            CombinePromise promise = Pool.Get<CombinePromise, CombinePromise.CombinePromisePoolable>();
+            FTask task = Pool.Get<FTask, FTask.FTaskPoolable>();
+
+            promise.CombineCall(task, tasks, 1);
             return task;
         }
     }

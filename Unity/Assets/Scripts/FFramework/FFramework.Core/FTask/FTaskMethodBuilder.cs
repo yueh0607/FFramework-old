@@ -34,12 +34,15 @@ namespace FFramework.Internal
         public readonly void SetException(Exception exception)
         {
             task.GetAwaiter().SetException(exception);
+            
         }
 
 
         [DebuggerHidden]
         public readonly void SetResult()
         {
+            if (task.Token != null)
+                ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
             task.GetAwaiter().SetResult();
         }
 
@@ -105,6 +108,8 @@ namespace FFramework.Internal
         [DebuggerHidden]
         public readonly void SetResult(T result)
         {
+            if (task.Token != null)
+                ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
             task.GetAwaiter().SetResult(result);
         }
 

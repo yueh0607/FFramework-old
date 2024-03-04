@@ -13,7 +13,9 @@ namespace FFramework
         void IUpdate.Update(float deltaTime)
         {
             if (!started) return;
-            switch (task.Token.Status)
+
+            FTaskTokenStatus status = task.Token?.Status ?? FTaskTokenStatus.Pending;
+            switch (status)
             {
                 case FTaskTokenStatus.Pending:
                     current += deltaTime;

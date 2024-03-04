@@ -41,7 +41,7 @@ namespace FFramework.MVVM.UI
         {
             T viewModel = await GetPanel<T,K>(); 
             await viewModel.Show();
-            Debug.Log("Sho");
+            //Debug.Log("Sho");
         }
 
        

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FFramework.MVVM
 {
@@ -30,11 +31,23 @@ namespace FFramework.MVVM
                     _setter(bindObject,value);
                 }
                 _value = value;
-                OnPropertyChanged?.Invoke(oldValue, _value);
+                onPropertyChanged?.Invoke(oldValue, _value);
             }
         }
 
-        public event Action<T, T> OnPropertyChanged = null;
+        private Action<T, T> onPropertyChanged = null;
+        public event Action<T, T> OnPropertyChanged
+        {
+            add
+            {
+                value?.Invoke(_value, _value);
+                onPropertyChanged += value;
+            }
+            remove
+            {
+                onPropertyChanged-=value;
+            }
+        }
 
         public BindableProperty(object bindObject ,Func<object,T> getter, Action<object,T> setter)
         {
@@ -55,10 +68,11 @@ namespace FFramework.MVVM
             _value = _getter(bindObject);
             if (!oldValue.Equals(_value))
             {
-                OnPropertyChanged?.Invoke(oldValue, _value);
+                onPropertyChanged?.Invoke(oldValue, _value);
             }
             oldValue = _value;
         }
+
 
     }
 }

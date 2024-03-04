@@ -60,8 +60,7 @@ namespace FFramework
         public void SetResult()
         {
             isCompleted = true;
-            if (task.Token != null)
-                ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
+  
             continuation?.Invoke();
         }
 
@@ -178,8 +177,6 @@ namespace FFramework
         {
             this.result = result;
             isCompleted = true;
-            if (task.Token != null)
-                ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
             continuation?.Invoke();
 
         }

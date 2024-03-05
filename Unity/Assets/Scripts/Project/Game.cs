@@ -47,8 +47,8 @@ public class Game
     public static async FTask Process(UnityThread thread)
     {
         Debug.Log("GameProcess");
-        
 
+        await FTask.Cross<float>(0, 10, 5, FloatLerper.Instance, (x) => Debug.Log(x));
         await FTask.CompletedTask;
     }
 }

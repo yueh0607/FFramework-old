@@ -1,0 +1,125 @@
+fileFormatVersion: 2
+guid: a154d3c2cd8e04a45a26c45d3417f7ab
+timeCreated: 1496575186
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Canopy
+    100004: Cockpit
+    100006: Engines
+    100008: FinLeft
+    100010: LaserCannonLeft
+    100012: LaserCannonRight
+    100014: MainHull
+    100016: MainHullColor
+    100018: TrusterControlJets
+    400000: //RootNode
+    400002: Canopy
+    400004: Cockpit
+    400006: Engines
+    400008: FinLeft
+    400010: LaserCannonLeft
+    400012: LaserCannonRight
+    400014: MainHull
+    400016: MainHullColor
+    400018: TrusterControlJets
+    2300000: Canopy
+    2300002: Cockpit
+    2300004: Engines
+    2300006: FinLeft
+    2300008: LaserCannonLeft
+    2300010: LaserCannonRight
+    2300012: MainHull
+    2300014: MainHullColor
+    2300016: TrusterControlJets
+    3300000: Canopy
+    3300002: Cockpit
+    3300004: Engines
+    3300006: FinLeft
+    3300008: LaserCannonLeft
+    3300010: LaserCannonRight
+    3300012: MainHull
+    3300014: MainHullColor
+    3300016: TrusterControlJets
+    4300000: MainHull
+    4300002: MainHullColor
+    4300004: Engines
+    4300006: FinLeft
+    4300008: TrusterControlJets
+    4300010: Cockpit
+    4300012: LaserCannonLeft
+    4300014: Canopy
+    4300016: LaserCannonRight
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

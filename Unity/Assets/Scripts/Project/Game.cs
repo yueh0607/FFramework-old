@@ -48,27 +48,6 @@ public class Game
     {
         Debug.Log("GameProcess");
         
-        //加载光照
-        var sun = await MV.Load<SunVM, Sun>();
-
-        //加载地图
-        //var map = await MV.Load<MapVM, Map>();
-        MainWorldGenerator mwg = new();
-        var genTask = mwg.Generate((x) => Debug.Log($"{x}"));
-        CancellationTokenSource source = new CancellationTokenSource();
-        await FTask.ToFTask(genTask,source);
-        var mapModel = MV.GetModel<MapModel>();
-
-        //加载玩家
-        var player = await MV.Load<PlayerVM, Player>();
-        player.TView.Player_Transform.position = new Vector3(MapModel.ChunkOrigin.x+MapModel.ChunkSize.x/2, MapModel.ChunkOrigin.y + MapModel.ChunkSize.y/2, MapModel.ChunkOrigin.z+MapModel.ChunkSize.x / 2);
-        
-        //加载主UI面板
-        await UI.Show<GamePanelVM, GamePanel>();
-
-        //模拟扣血
-        MV.GetModel<PlayerModel>().Hp.Value -= 10;
-        
 
         await FTask.CompletedTask;
     }

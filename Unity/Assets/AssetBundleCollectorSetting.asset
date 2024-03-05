@@ -53,58 +53,13 @@ MonoBehaviour:
     IgnoreDefaultType: 1
     AutoCollectShaders: 1
     Groups:
-    - GroupName: Prefabs
+    - GroupName: Default Group
       GroupDesc: 
       AssetTags: 
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/Arts/Prefabs/UI
-        CollectorGUID: 5e464943923305c4085741192a45fb81
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackDirectory
-        FilterRuleName: CollectPrefab
-        AssetTags: 
-        UserData: 
-      - CollectPath: Assets/Arts/Prefabs/MapZone
-        CollectorGUID: f7c9cedaea9b9914fbff5440ec09d3e2
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackDirectory
-        FilterRuleName: CollectPrefab
-        AssetTags: 
-        UserData: 
-      - CollectPath: Assets/Arts/Prefabs/Entity
-        CollectorGUID: 62bf2a2c394f6e941bc48780118b7b2c
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackDirectory
-        FilterRuleName: CollectPrefab
-        AssetTags: 
-        UserData: 
-      - CollectPath: Assets/Arts/Prefabs/Global
-        CollectorGUID: d413c5d463d71824d8827b43e26c36a3
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackDirectory
-        FilterRuleName: CollectPrefab
-        AssetTags: 
-        UserData: 
-    - GroupName: Mats
-      GroupDesc: "\u65B9\u5757\u6750\u8D28"
-      AssetTags: 
-      ActiveRuleName: EnableGroup
-      Collectors:
-      - CollectPath: Assets/Arts/BlocksMaterial
-        CollectorGUID: c6e37b2843718b641b4b0e5a39de0aa0
-        CollectorType: 0
-        AddressRuleName: AddressByFileName
-        PackRuleName: PackDirectory
-        FilterRuleName: CollectMaterials
-        AssetTags: 
-        UserData: 
-      - CollectPath: Assets/Arts/Prefabs/Blocks
-        CollectorGUID: 6e7239a78ca94294291ba7a5a83cab2d
+      - CollectPath: Assets/Arts/Prefabs
+        CollectorGUID: cbb6b439a28bbb4408d70769534fcf7a
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackDirectory

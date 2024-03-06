@@ -47,8 +47,13 @@ public class Game
     public static async FTask Process(UnityThread thread)
     {
         Debug.Log("GameProcess");
+        //加载角色
+        var plane = await MV.Load<PlaneVM, FFramework.MVVM.RefCache.Plane>();
+        //加载相机
+        var camera = await MV.Load<FollowCameraVM, FollowCamera>();
+        camera.SetFollow(plane.TView.transform,Vector3.zero,0.1f);
 
-        await FTask.Cross<float>(0, 10, 5, FloatLerper.Instance, (x) => Debug.Log(x));
+
         await FTask.CompletedTask;
     }
 }

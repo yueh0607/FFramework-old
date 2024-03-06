@@ -40,7 +40,7 @@ namespace FFramework.MVVM.RefCache
             var gameCfg = MV.GetModel<GameCfgModel>().Data[0];
 
             //移动
-            TView.Plane_Rigidbody.MovePosition(gameCfg.planeMoveSpeed * Time.deltaTime * v * TView.transform.forward );
+            TView.Plane_Rigidbody.MovePosition(TView.transform.position+  gameCfg.planeMoveSpeed * Time.deltaTime * v * TView.transform.forward );
             //旋转
             TView.Plane_Rigidbody.MoveRotation(Quaternion.Euler(0, TView.Plane_Rigidbody.rotation.eulerAngles.y + h * Time.deltaTime*gameCfg.rotSpeed,0));
 

@@ -41,9 +41,6 @@ namespace FFramework.MVVM.RefCache
         }
         async FTask DelaySendTask()
         {
-            //初始是向前移动
-            var cfg = MV.GetModel<GameCfgModel>().Data[0];
-            TView.Missile_Rigidbody.velocity = TView.transform.forward * cfg.missileMoveMaxSpeed;
             await FTask.Delay(2);
             this.EnableUpdate();
         }
@@ -68,9 +65,9 @@ namespace FFramework.MVVM.RefCache
             if (enemy == null || enemy.TView == null|| TView==null) return;
             var cfg = MV.GetModel<GameCfgModel>().Data[0];
             //追击方向
-            Vector3 moveDir =enemy.TView.transform.position - TView.transform.position;
+            Vector3 moveDir = enemy.TView.transform.position - TView.transform.position;
             //锁定朝向敌人
-            TView.Missile_Rigidbody.rotation = Quaternion.Lerp(
+            TView.transform.rotation = Quaternion.Lerp(
                 TView.Missile_Rigidbody.rotation,
                 Quaternion.LookRotation(moveDir.normalized, enemy.TView.transform.position),
                 cfg.missileRotSpeed * Time.deltaTime);

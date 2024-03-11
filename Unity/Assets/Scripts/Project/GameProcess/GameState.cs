@@ -74,7 +74,7 @@ public class GameState : State
             await MV.UnloadToPool<EnemyVM,EnemyVM.EnemyPoolable>(enemies[i]);
         }
         enemies.Clear();
-        enemyCount = 0;
+       
 
 
 
@@ -94,10 +94,6 @@ public class GameState : State
         await FTask.CompletedTask;
     }
 
-    /// <summary>
-    /// 当前敌人数量
-    /// </summary>
-    int enemyCount = 0;
 
     /// <summary>
     /// 敌人
@@ -112,14 +108,14 @@ public class GameState : State
     async FTask GenerateEnemy()
     {
         var model = MV.GetModel<GameCfgModel>().Data[0];
-        while(enemyCount<model.enemyCount)
+        while(enemies.Count<model.enemyCount)
         {
             Debug.Log("3s后生成敌人");
             await FTask.Delay(3);
             var enemy = await MV.LoadFromPool<EnemyVM, Enemy,EnemyVM.EnemyPoolable>();
             enemies.Add(enemy);
             Debug.Log("生成敌人");
-            enemyCount++;
+    
         }
     }
 

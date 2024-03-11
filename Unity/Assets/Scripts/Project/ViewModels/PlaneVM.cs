@@ -12,13 +12,13 @@ using UnityEngine;
 
 namespace FFramework.MVVM.RefCache
 {
-    public class PlaneVM : FFramework.MVVM.ViewModel<FFramework.MVVM.RefCache.Plane>,IUpdate
+    public class PlaneVM : FFramework.MVVM.ViewModel<FFramework.MVVM.RefCache.Plane>, IUpdate
     {
 
         public override async FTask OnLoad()
         {
             TView.InitRefs();
-            
+
             //值变化同步到Model
             var planeModel = MV.GetModel<PlaneModel>();
             TView.Plane_Transform_position.OnPropertyChanged +=
@@ -45,20 +45,21 @@ namespace FFramework.MVVM.RefCache
         }
         async FTask SendMissile()
         {
-            
+
             if (!canSend) return;
             else SendMissileCD().Forget();
             Debug.Log("发射");
             var missile = await MV.Load<MissileVM, Missile>();
-     
+            var cfg = MV.GetModel<GameCfgModel>().Data[0];
             missile.TView.transform.position = TView.Plane_Transform_position.Value;
-            missile.TView.transform.rotation = TView.Plane_Transform.rotation;
+            missile.TView.transform.rotation = Quaternion.LookRotation(TView.transform.forward);
+            missile.TView.Missile_Rigidbody.velocity = TView.transform.forward * cfg.missileMoveMaxSpeed;
         }
         void IUpdate.Update(float deltaTime)
         {
             //监听值变化的改变并发布
             TView.Plane_Transform_position.ListenChanged(deltaTime);
-            
+
 
             //取得玩家操作
             float h = Input.GetAxis("Horizontal");
@@ -71,21 +72,21 @@ namespace FFramework.MVVM.RefCache
             var gameCfg = MV.GetModel<GameCfgModel>().Data[0];
 
             //飞机航速
-            TView.Plane_Rigidbody.velocity = (gameCfg.planeStableSpeed+  gameCfg.planeMoveSpeed  * v )*TView.transform.forward ;
-            
-            
+            TView.Plane_Rigidbody.velocity = (gameCfg.planeStableSpeed + gameCfg.planeMoveSpeed * v) * TView.transform.forward;
+
+
             //旋转
-            TView.Plane_Rigidbody.MoveRotation(Quaternion.Euler(0, TView.Plane_Rigidbody.rotation.eulerAngles.y + h *gameCfg.rotSpeed* Time.deltaTime,0));
+            TView.Plane_Rigidbody.MoveRotation(Quaternion.Euler(0, TView.Plane_Rigidbody.rotation.eulerAngles.y + h * gameCfg.rotSpeed * Time.deltaTime, 0));
 
             //按下空格发射导弹
-            if(Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                
+
                 SendMissile().Forget();
             }
         }
 
-      
+
     }
 }
 

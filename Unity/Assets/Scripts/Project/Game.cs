@@ -39,6 +39,9 @@ public class Game
         await FTask.CompletedTask;
     }
 
+
+
+    public static GameController GameCon;
     /// <summary>
     /// 过程（一定会在初始化后执行）
     /// </summary>
@@ -47,11 +50,10 @@ public class Game
     public static async FTask Process(UnityThread thread)
     {
         Debug.Log("GameProcess");
-        //加载角色
-        var plane = await MV.Load<PlaneVM, FFramework.MVVM.RefCache.Plane>();
-        //加载相机
-        var camera = await MV.Load<FollowCameraVM, FollowCamera>();
-        camera.SetFollow(plane.TView.transform,Vector3.zero,0.1f);
+
+        GameCon = new GameController();
+
+
 
 
         await FTask.CompletedTask;

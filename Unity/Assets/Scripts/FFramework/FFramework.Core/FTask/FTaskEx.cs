@@ -35,7 +35,6 @@ namespace FFramework
 
         /// <summary>
         /// Task转入FTask，非必要不要使用，会使得FTask任务链的挂起功能受到损失（例如在执行此任务时不会暂停）
-        /// 但是不影响取消功能，如果可以保证使用它的任务链不需要暂停，或者执行它的时候不会暂停，就可以完整支持挂起功能。
         /// </summary>
         /// <param name="task"></param>
         /// <param name="source"></param>
@@ -44,11 +43,12 @@ namespace FFramework
         {
             SynchronizationContext context = SynchronizationContext.Current;
             FTask fTask = Pool.Get<FTask, FTask.FTaskPoolable>();
-
+            
             context.Post(async (state) =>
             {
                 try
                 {
+                    if (source != null) fTask.Token.OnCancel += source.Cancel;
                     await task;
                     context.Post(_ =>
                     {
@@ -112,7 +112,7 @@ namespace FFramework
             CombinePromise promise = Pool.Get<CombinePromise, CombinePromise.CombinePromisePoolable>();
             FTask task = Pool.Get<FTask, FTask.FTaskPoolable>();
 
-            promise.CombineCall(task, tasks,tasks.Count);
+            promise.CombineCall(task, tasks, tasks.Count);
             return task;
         }
         /// <summary>

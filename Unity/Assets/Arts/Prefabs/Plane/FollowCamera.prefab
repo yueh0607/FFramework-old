@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3643831872700146335}
   - component: {fileID: 3643831872700146330}
   - component: {fileID: 3643831873296846551}
+  - component: {fileID: 3643831873296846550}
   m_Layer: 0
   m_Name: FollowCamera
   m_TagString: MainCamera
@@ -109,3 +110,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildTarget: {fileID: 3643831872700146329}
   buildProperty: 
+--- !u!114 &3643831873296846550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3643831872700146334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32b6bb0074f6504bbeb8832f72cd2ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MeshSize: 1000000
+  CellSize: 100
+  LineMat: {fileID: 2100000, guid: f2b1f557c36349e4b9ace305eecf4b89, type: 2}
+  Center: {x: 0, y: 0, z: 0}
+  MeshColor: {r: 0.08693147, g: 1, b: 0, a: 0}

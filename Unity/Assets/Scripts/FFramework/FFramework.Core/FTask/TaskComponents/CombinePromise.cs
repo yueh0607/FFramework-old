@@ -30,7 +30,7 @@ namespace FFramework
                 case FTaskTokenStatus.Cancelled:
                     task.GetAwaiter().SetCanceled();
                     Pool.Set<CombinePromise, CombinePromisePoolable>(this);
-                    break;
+                    return;
             }
 
             if (result)
@@ -97,4 +97,7 @@ namespace FFramework
             }
         }
     }
+
+
+
 }

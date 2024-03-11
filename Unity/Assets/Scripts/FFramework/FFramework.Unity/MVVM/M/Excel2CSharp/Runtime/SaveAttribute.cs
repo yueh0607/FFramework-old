@@ -5,6 +5,17 @@ using UnityEngine;
 
 namespace FFramework.MVVM
 {
+
+    [AttributeUsage(AttributeTargets.Field,AllowMultiple = false, Inherited =false)]
+    public class ModelSaveIgnoreAttribute : Attribute
+    {
+
+        public ModelSaveIgnoreAttribute()
+        {
+
+        }
+    }
+
     [AttributeUsage(AttributeTargets.Field,AllowMultiple = false, Inherited =false)]
     public class SaveAttribute : Attribute
     {

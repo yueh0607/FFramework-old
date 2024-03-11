@@ -9,13 +9,13 @@ namespace FFramework.RefCache
     {
         [FFramework.MVVM.Config.PrimaryKey]
         public System.Single planeMoveSpeed = default;
+        public System.Single planeStableSpeed = default;
         public System.Single rotSpeed = default;
         public System.Single bulletDuration = default;
         public System.Single enemyMoveSpeed = default;
         public System.Single enemyRotSpeed = default;
-        public System.Single enemyDensity = default;
+        public System.Single enemyCount = default;
         public System.Single missileMoveMaxSpeed = default;
-        public System.Single missileAcc = default;
         public System.Single missileRotSpeed = default;
 
     }
@@ -24,7 +24,7 @@ namespace FFramework.RefCache
     {
         public System.Collections.Generic.List<GameCfgItem> Data = new System.Collections.Generic.List<GameCfgItem>()
         {
-new GameCfgItem(){planeMoveSpeed = 1F,rotSpeed = 1F,bulletDuration = 5F,enemyMoveSpeed = 1F,enemyRotSpeed = 1F,enemyDensity = 0.1F,missileMoveMaxSpeed = 1F,missileAcc = 1F,missileRotSpeed = 1F}
+new GameCfgItem(){planeMoveSpeed = 50F,planeStableSpeed = 10F,rotSpeed = 60F,bulletDuration = 5F,enemyMoveSpeed = 50F,enemyRotSpeed = 0.5F,enemyCount = 8F,missileMoveMaxSpeed = 60F,missileRotSpeed = 0.6F}
 
         };
 

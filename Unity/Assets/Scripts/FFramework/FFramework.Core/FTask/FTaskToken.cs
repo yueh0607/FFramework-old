@@ -8,7 +8,7 @@ namespace FFramework
         void SetStatus(FTaskTokenStatus status, object anyParam);
     }
 
-    public class FTaskToken : ITaskTokenStatusSetter
+    public class FTaskToken : FUnit, ITaskTokenStatusSetter
     {
         bool inPool = false;
         private FTaskToken() { }
@@ -37,6 +37,12 @@ namespace FFramework
         /// </summary>
         public ExceptionDispatchInfo FailedException => failedLog;
 
+        public event Action OnContinue = null;
+
+        public event Action OnYield = null;
+
+        public event Action OnCancel = null;
+
         /// <summary>
         /// 取消任务（不允许对已取消的任务进行操作）
         /// </summary>
@@ -47,6 +53,7 @@ namespace FFramework
                 throw new InvalidOperationException($"Illegal suspension(from {status} to {FTaskTokenStatus.Yield})");
 
             status = FTaskTokenStatus.Cancelled;
+            OnCancel?.Invoke();
         }
         /// <summary>
         /// 挂起任务（不允许对已挂起或者取消的任务进行操作）
@@ -58,6 +65,7 @@ namespace FFramework
                 throw new InvalidOperationException($"Illegal suspension(from {status} to {FTaskTokenStatus.Yield})");
 
             status = FTaskTokenStatus.Yield;
+            OnYield?.Invoke();
         }
 
         /// <summary>
@@ -70,8 +78,8 @@ namespace FFramework
                 throw new InvalidOperationException($"Illegal suspension(from {status} to {FTaskTokenStatus.Yield})");
 
             status = FTaskTokenStatus.Pending;
+            OnContinue?.Invoke();
         }
-
 
 
         /// <summary>
@@ -113,6 +121,9 @@ namespace FFramework
                 obj.inPool = true;
                 obj.status = FTaskTokenStatus.Pending;
                 obj.failedLog = null;
+                obj.OnCancel = null;
+                obj.OnYield = null;
+                obj.OnContinue = null;
             }
         }
     }

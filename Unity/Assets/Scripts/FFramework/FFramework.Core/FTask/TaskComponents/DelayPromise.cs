@@ -25,7 +25,7 @@ namespace FFramework
                 case FTaskTokenStatus.Cancelled:
                     task.GetAwaiter().SetCanceled();
                     Pool.Set<DelayPromise, DelayPromisePoolable>(this);
-                    break;
+                    return ;
             }
 
             if (current >= seconds)

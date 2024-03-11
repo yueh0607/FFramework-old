@@ -17,38 +17,57 @@ namespace FFramework.MVVM.RefCache
         public override async FTask OnLoad()
         {
             TView.InitRefs();
+            this.EnableUpdate();
             await FTask.CompletedTask;
         }
 
         public override async FTask OnUnload()
         {
+            syncStart = false;
+            this.DisableUpdate();
             await FTask.CompletedTask;
         }
 
-        bool syncStart = false;
-        Vector3 offset;
 
-        float syncSpeed;
-
+        //同步目标
         Transform target;
-        public void SetFollow(Transform target,Vector3 offset,float syncSpeed=0.1f)
+
+        bool syncStart = false;
+        
+        /// <summary>
+        /// 是否已经开启同步
+        /// </summary>
+        public bool SyncStarted => syncStart;
+
+
+        /// <summary>
+        /// 设置跟随目标并开启同步
+        /// </summary>
+        /// <param name="target"></param>
+        public void SetFollow(Transform target)
         {
- 
-            this.offset = offset;
-         
-            this.syncSpeed = syncSpeed;
             this.target = target;
             syncStart = true;
         }
 
+        /// <summary>
+        /// 停止同步
+        /// </summary>
+        public void DisableFollow()
+        {
+            syncStart = false;
+        }
+
+
         void IUpdate.Update(float deltaTime)
         {
             if (!syncStart) return;
+            var model = MV.GetModel<CameraFollowModel>();
             //偏移值
-            Vector3 delta = TView.FollowCamera_Transform.position- this.offset - target.position;
-
+            Vector3 delta = TView.FollowCamera_Transform.position- model.offset - target.position;
+            //插值同步
             TView.FollowCamera_Transform.position = Vector3.Lerp(TView.transform.position,
-                target.transform.position + offset, syncSpeed);
+                target.transform.position + model.offset, model.syncSpeed);
         }
     }
 }

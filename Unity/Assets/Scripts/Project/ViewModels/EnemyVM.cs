@@ -6,22 +6,90 @@
  *******************************************************/
 using FFramework;
 using FFramework.MVVM;
+using FFramework.RefCache;
+using UnityEngine;
 
 namespace FFramework.MVVM.RefCache
 {
-    public class EnemyVM : FFramework.MVVM.ViewModel<FFramework.MVVM.RefCache.Enemy>
+    public class EnemyVM : FFramework.MVVM.ViewModel<FFramework.MVVM.RefCache.Enemy>, IUpdate
     {
-        //Select Text And Press Ctrl + K + U to uncomment.
+        bool initedView = false;
+        public override async FTask OnLoad()
+        {
+            if (!initedView)
+                TView.InitRefs();
+            initedView = true;
 
-        //public override async FTask OnLoad()
-        //{
-            //await FTask.CompletedTask;
-        //}
+            TView.gameObject.SetActive(true);
+            this.EnableUpdate();
 
-        //public override async FTask OnUnload()
-        //{
-            //await FTask.CompletedTask;
-        //}
+            await FTask.CompletedTask;
+        }
+
+        public override async FTask OnUnload()
+        {
+            this.DisableUpdate();
+
+            TView.gameObject.SetActive(false);
+
+            await FTask.CompletedTask;
+        }
+
+        void IUpdate.Update(float deltaTime)
+        {
+            var model = MV.GetModel<PlaneModel>();
+            var cfg = MV.GetModel<GameCfgModel>().Data[0];
+            //追击方向
+            Vector3 moveDir = model.PlanePosition.Value - TView.transform.position;
+            //锁定朝向玩家
+            TView.Enemy_Rigidbody.rotation = Quaternion.Lerp(
+                TView.Enemy_Rigidbody.rotation,
+                Quaternion.LookRotation(moveDir.normalized, model.PlanePosition.Value
+                + new Vector3(Random.Range(-300f, 300f), 0, Random.Range(-300f, 300f))),
+                cfg.enemyRotSpeed * Time.deltaTime);
+            //追击玩家
+            TView.Enemy_Rigidbody.velocity = TView.transform.forward * cfg.enemyMoveSpeed;
+        }
+
+        /// <summary>
+        /// 斩杀怪物
+        /// </summary>
+        public async FTask Kill()
+        {
+            var planeModel = MV.GetModel<PlaneModel>();
+            planeModel.killCount.Value++;
+            Game.GameCon.GameState.enemies.Remove(this);
+            await MV.UnloadToPool<EnemyVM, EnemyVM.EnemyPoolable>(this);
+        }
+        /// <summary>
+        /// 对象池行为：针对VM的，GameObject的行为也可以在此通过TView控制
+        /// </summary>
+        public class EnemyPoolable : IPoolable<EnemyVM>
+        {
+            int IPoolable.Capacity => 100;
+
+            EnemyVM IPoolable<EnemyVM>.OnCreate()
+            {
+                return new EnemyVM();
+
+            }
+
+            void IPoolable<EnemyVM>.OnDestroy(EnemyVM obj)
+            {
+
+            }
+
+            void IPoolable<EnemyVM>.OnGet(EnemyVM obj)
+            {
+               
+            }
+
+            void IPoolable<EnemyVM>.OnSet(EnemyVM obj)
+            {
+
+
+            }
+        }
     }
 }
 

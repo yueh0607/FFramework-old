@@ -132,7 +132,8 @@ namespace FFramework.MVVM
         /// <summary>
         /// 存档
         /// </summary>
-        /// <param name="saveOrder"></param>
+        /// <param name="saveOrder">存档ID</param>
+        /// <param name="modelPreFrame">每帧保存多少个</param>
         /// <returns></returns>
         public static FTask SaveModels(int saveOrder = 0)
         {
@@ -141,24 +142,27 @@ namespace FFramework.MVVM
             string path = Application.persistentDataPath + $"/Saves/{saveOrder}.save";
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             CancellationTokenSource cts = new CancellationTokenSource();
+            Interlocked.MemoryBarrier();
             Task task = Task.Run(() =>
             {
+                
                 //ModelTypeName          -> ID -> SaveFieldName -> Value
                 Dictionary<string, Dictionary<long, Dictionary<string, string>>> saveMap = new Dictionary<string, Dictionary<long, Dictionary<string, string>>>();
 
                 //遍历类型
                 foreach (var kvp in models)
                 {
+                    if (kvp.Key.GetCustomAttribute<ModelSaveIgnoreAttribute>() != null) continue;
                     string typeSign = $"{kvp.Key.FullName},{kvp.Key.Module}";
                     //添加类型映射
                     saveMap.Add(typeSign, new Dictionary<long, Dictionary<string, string>>());
                     foreach (var kvp2 in kvp.Value)
                     {
+                        
                         //添加id映射
                         saveMap[typeSign].Add(kvp2.Key, new Dictionary<string, string>());
                         //获取所有字段
                         FieldInfo[] infos = kvp.Key.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
                         foreach (var fi in infos)
                         {
                             //字段如果确认保存
@@ -169,6 +173,7 @@ namespace FFramework.MVVM
                                 saveMap[typeSign][kvp2.Key].Add(st.SaveName, str);
                             }
                         }
+
                     }
                 }
 
@@ -314,6 +319,7 @@ namespace FFramework.MVVM
 
             TView view = instance.AddComponent<TView>();
             TViewModel viewmodel = new TViewModel();
+            view.ViewModelReference = viewmodel;
             viewmodel.TView = view;
             await viewmodel.OnLoad();
             return viewmodel;
@@ -379,6 +385,7 @@ namespace FFramework.MVVM
 
 
             TViewModel viewmodel = Pool.Get<TViewModel, TPoolable>();
+            view.ViewModelReference = viewmodel;
             viewmodel.TView = view;
 
             await viewmodel.OnLoad();

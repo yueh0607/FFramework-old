@@ -24,7 +24,7 @@ namespace FFramework
                 case FTaskTokenStatus.Cancelled:
                     task.GetAwaiter().SetCanceled();
                     Pool.Set<UntilPromise, UntilPromisePoolable>(this);
-                    break;
+                    return;
             }
 
             if (result)

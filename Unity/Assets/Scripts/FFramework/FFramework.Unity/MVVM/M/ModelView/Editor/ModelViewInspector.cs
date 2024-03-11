@@ -56,11 +56,16 @@ namespace FFramework.FUnityEditor
                 EditorGUILayout.HelpBox($"Model名称不能为空", MessageType.Warning);
                 return;
             }
-            //取得指定类型
-            Type type = targetAssembly?.GetType(selectedModels.stringValue);
+
+            Type[] allTypes = targetAssembly.GetTypes();
+
+            // 根据条件筛选类型
+            Type type = allTypes.FirstOrDefault(t => t.Name==selectedModels.stringValue);
+
             if (type == null)
             {
-                EditorGUILayout.HelpBox($"在指定程序集不存在该Model类型或不存在该程序集 AssemblyNull={targetAssembly == null}", MessageType.Error);
+                EditorGUILayout.HelpBox($"在指定程序集不存在该Model类型或不存在该程序集 AssemblyIsNull={targetAssembly == null}", MessageType.Error);
+                
                 return;
             }
             GUILayout.Space(10);
@@ -86,15 +91,13 @@ namespace FFramework.FUnityEditor
 
                 if (foldouts[kvp.Key])
                 {
-                    EditorGUILayout.LabelField("Public Fields");
                     foreach (var item in fieldsInfoPublic)
                     {
-                        DrawStrategy.Draw(item,kvp.Value);
+                        Draw(item, kvp.Value);
                     }
-                    EditorGUILayout.LabelField("Private Fields");
                     foreach (var item in fieldsInfoNoPublic)
                     {
-                        DrawStrategy.Draw(item, kvp.Value);
+                        Draw(item, kvp.Value);
                     }
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
@@ -103,6 +106,11 @@ namespace FFramework.FUnityEditor
             serializedObject.ApplyModifiedProperties();
         }
 
-
+        void Draw(FieldInfo item, object model)
+        {
+            DrawStrategy.Draw(item.Name, model,item.FieldType,(x)=>item.GetValue(x),(x,y)=>item.SetValue(x,y) );
+        }
     }
+
+   
 }

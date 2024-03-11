@@ -38,21 +38,23 @@ namespace FFramework.Internal
         }
 
 
-        [DebuggerHidden]
+        //[DebuggerHidden]
         public readonly void SetResult()
         {
-            if (task.Token != null)
-                ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
+            //if (task.Token != null)
+                //((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
             task.GetAwaiter().SetResult();
         }
 
 
-        [DebuggerHidden]
+        //[DebuggerHidden]
         public readonly void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine
         {
             awaiter.OnCompleted(stateMachine.MoveNext);
             if (awaiter is ITaskTokenProperty ftask)
             {
+                //if(ftask.GetToken()!=null)
+                //绑定当前任务的令牌
                 ftask.SetToken(((ITaskTokenProperty)task).GetToken());
             }
         }
@@ -63,7 +65,8 @@ namespace FFramework.Internal
             awaiter.OnCompleted(stateMachine.MoveNext);
             if (awaiter is ITaskTokenProperty ftask)
             {
-                ftask.SetToken(((ITaskTokenProperty)task).GetToken());
+                //if (ftask.GetToken() != null)
+                    ftask.SetToken(((ITaskTokenProperty)task).GetToken());
             }
         }
 
@@ -108,8 +111,8 @@ namespace FFramework.Internal
         [DebuggerHidden]
         public readonly void SetResult(T result)
         {
-            if (task.Token != null)
-                ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
+           // if (task.Token != null)
+                //((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Success, null);
             task.GetAwaiter().SetResult(result);
         }
 
@@ -120,7 +123,8 @@ namespace FFramework.Internal
             awaiter.OnCompleted(stateMachine.MoveNext);
             if (awaiter is ITaskTokenProperty ftask)
             {
-                ftask.SetToken(((ITaskTokenProperty)task).GetToken());
+                //if (ftask.GetToken() != null)
+                    ftask.SetToken(((ITaskTokenProperty)task).GetToken());
             }
         }
 
@@ -130,7 +134,8 @@ namespace FFramework.Internal
             awaiter.OnCompleted(stateMachine.MoveNext);
             if (awaiter is ITaskTokenProperty ftask)
             {
-                ftask.SetToken(((ITaskTokenProperty)task).GetToken());
+                //if (ftask.GetToken() != null)
+                    ftask.SetToken(((ITaskTokenProperty)task).GetToken());
             }
         }
 

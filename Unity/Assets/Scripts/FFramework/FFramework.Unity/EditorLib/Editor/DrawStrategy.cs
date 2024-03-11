@@ -10,45 +10,71 @@ namespace FFramework.FUnityEditor
 {
     public class DrawStrategy
     {
-
-        public static void Draw(FieldInfo info, object obj)
-        {
-            if (info.FieldType == typeof(int))
-            {
-                info.SetValue(obj, EditorGUILayout.IntField(info.Name, (int)info.GetValue(obj)));
-            }
-            else if (info.FieldType == typeof(long))
-            {
-                info.SetValue(obj, EditorGUILayout.LongField(info.Name, (long)info.GetValue(obj)));
-            }
-            else if (info.FieldType == typeof(float))
-            {
-                info.SetValue(obj, EditorGUILayout.FloatField(info.Name, (float)info.GetValue(obj)));
-            }
-            else if (info.FieldType == typeof(double))
-            {
-                info.SetValue(obj, EditorGUILayout.DoubleField(info.Name, (double)info.GetValue(obj)));
-            }
-            else if (info.FieldType == typeof(string))
-            {
-                info.SetValue(obj, EditorGUILayout.TextField(info.Name, (string)info.GetValue(obj)));
-            }
-            else if (info.FieldType == typeof(bool))
-            {
-                info.SetValue(obj, EditorGUILayout.Toggle(info.Name, (bool)info.GetValue(obj)));
-            }
-            else if (info.FieldType.IsGenericType && info.FieldType.GetGenericTypeDefinition().Name.Split('`')[0] =="BindableProperty")
-            {
     
-                FieldInfo field = info.FieldType.GetField("_value", BindingFlags.NonPublic|BindingFlags.Instance);
-                object oldValue = field.GetValue(info.GetValue(obj));
-                var bindable  = info.GetValue(obj);
-                Draw(field,bindable ); 
-                ((IBindablePropertyNotify)bindable)?.Notify(oldValue);
+
+        public static void Draw(string name, object obj,Type type , Func<object,object> getter,Action<object,object> setter)
+        {
+            if (type == typeof(int))
+            {
+                setter(obj, EditorGUILayout.IntField(name, (int)getter(obj)));
+            }
+            else if (type == typeof(long))
+            {
+                setter(obj, EditorGUILayout.LongField(name, (long)getter(obj)));
+            }
+            else if (type == typeof(float))
+            {
+                setter(obj, EditorGUILayout.FloatField(name, (float)getter(obj)));
+            }
+            else if (type == typeof(double))
+            {
+                setter(obj, EditorGUILayout.DoubleField(name, (double)getter(obj)));
+            }
+            else if (type == typeof(string))
+            {
+                setter(obj, EditorGUILayout.TextField(name, (string)getter(obj)));
+            }
+            else if (type == typeof(bool))
+            {
+                setter(obj, EditorGUILayout.Toggle(name, (bool)getter(obj)));
+            }
+            else if (type.IsGenericType && type.GetGenericTypeDefinition().Name.Split('`')[0] == "BindableProperty")
+            {
+                Draw(name+"(Bindable)", getter(obj), type.GetGenericArguments()[0], (x) => ((IConvertValue)x).GetValue(), (x, y) => ((IConvertValue)x).SetValue(y));
+            }
+            else if(type.IsGenericType && type.GetGenericTypeDefinition().Name.Split('`')[0] == "List")
+            {
+                EditorGUILayout.Space(5);
+                EditorGUILayout.LabelField(name+"(List)");
+                object objList = getter(obj);
+                IList list = (IList)objList;
+                int count = list.Count;
+                for(int i=0;i<count;i++)
+                {
+                    Draw(i.ToString(), list[i], type.GetGenericArguments()[0], (x) => ((IList)(x))[i], (x, y) => ((IList)(x))[i] = y);
+                }
+            }
+            else if(type.FullName.EndsWith("Item"))
+            {
+                //公开字段
+                FieldInfo[] fieldsInfoPublic = type.GetFields(BindingFlags.Instance | BindingFlags.Public |  BindingFlags.GetField);
+                //非公开字段
+                FieldInfo[] fieldsInfoNoPublic = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic |BindingFlags.GetField);
+
+                foreach (var item in fieldsInfoPublic)
+                {
+                    DrawStrategy.Draw(item.Name, obj, item.FieldType, (x) => item.GetValue(x), (x, y) => item.SetValue(x, y));
+                }
+                foreach (var item in fieldsInfoNoPublic)
+                {
+                    DrawStrategy.Draw(item.Name, obj, item.FieldType, (x) => item.GetValue(x), (x, y) => item.SetValue(x, y));
+                }
+
+                
             }
             else
             {
-                EditorGUILayout.LabelField($"{info.Name}: Unsupported Type={info.FieldType}");
+                EditorGUILayout.LabelField($"{name}: Unsupported Type={type}");
             }
         }
     }

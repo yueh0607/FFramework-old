@@ -389,7 +389,7 @@ namespace #NAMESPACE#
                     model = model.Replace("#NAMESPACE#", _namespace);
                     model = model.Replace("#CLASS#", _class);
                     model = model.Replace("#PART#", part ? "partial " : string.Empty);
-                    model = model.Replace("#BASECLASS#", isUI?"FFramework.MVVM.UIPanel": "FFramework.MVVM.View");
+                    model = model.Replace("#BASECLASS#",  "FFramework.MVVM.View");
                     model = model.Replace("#NEWFUNC#", awakeInit ?
     @"
         private void Awake()
@@ -411,7 +411,7 @@ namespace #NAMESPACE#
 
                     string scriptName =gameObjectName + "VM";
                     string absVMPath = Path.Combine(EditorHelper.ProjectPath, vmGenPath, scriptName + ".cs");
-                    BuildVM(absVMPath, scriptName, "FFramework.MVVM.ViewModel", gameObjectName, _namespace);
+                    BuildVM(absVMPath, scriptName, isUI? "FFramework.MVVM.UIPanel":"FFramework.MVVM.ViewModel", gameObjectName, _namespace);
                 }
 
             }

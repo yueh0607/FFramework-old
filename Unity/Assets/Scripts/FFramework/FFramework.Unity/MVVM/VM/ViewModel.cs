@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FFramework.MVVM
 {
-    public class ViewModel<T> : IViewModel<T> where T : View
+    public class ViewModel<T> : FUnit, IViewModel<T> where T : View
     {
         /// <summary>
         /// 视图

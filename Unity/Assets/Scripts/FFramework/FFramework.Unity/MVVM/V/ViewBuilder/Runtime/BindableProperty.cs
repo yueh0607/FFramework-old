@@ -11,8 +11,14 @@ namespace FFramework.MVVM
 
         void Notify();
     }
+    public interface IConvertValue
+    {
+        void SetValue(object value);
 
-    public class BindableProperty<T>:IBindablePropertyNotify where T : IEquatable<T>
+        object GetValue();
+    }
+
+    public class BindableProperty<T>:IBindablePropertyNotify,IConvertValue where T : IEquatable<T>
     {
         private readonly object bindObject = null;
 
@@ -94,5 +100,14 @@ namespace FFramework.MVVM
             onPropertyChanged?.Invoke(_value, _value);
         }
 
+        void IConvertValue.SetValue(object value)
+        {
+            Value = (T)value;
+        }
+
+        object IConvertValue.GetValue()
+        {
+            return Value;
+        }
     }
 }

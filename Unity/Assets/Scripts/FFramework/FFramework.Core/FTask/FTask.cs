@@ -21,7 +21,7 @@ namespace FFramework
 
 
     [AsyncMethodBuilder(typeof(Internal.FTaskMethodBuilder))]
-    public partial class FTask : ITaskTokenProperty
+    public partial class FTask :FUnit, ITaskTokenProperty
     {
         //等待器
         private readonly FTaskAwaiter awaiter;
@@ -102,7 +102,7 @@ namespace FFramework
 
 
     [AsyncMethodBuilder(typeof(Internal.FTaskMethodBuilder<>))]
-    public partial class FTask<T> : ITaskTokenProperty
+    public partial class FTask<T> : FUnit, ITaskTokenProperty
     {
         //等待器
         private readonly FTaskAwaiter<T> awaiter;

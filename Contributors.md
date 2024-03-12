@@ -1,8 +1,8 @@
 # Developer
-1. [yueh0607](github.com/yueh0607)   Framework design and development.
+1. [yueh0607](https://github.com/yueh0607)   Framework design and development.
 
 # Thanks
-1. [notattack](github.com/notattack)   Writing dozens of Mono lifecycle monitoring scripts
+1. [notattack](https://github.com/notattack)   Writing dozens of Mono lifecycle monitoring scripts
 
 
 

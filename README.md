@@ -11,5 +11,7 @@ Here is a screenshot of the demo.
 
 <img width="960" alt="622325ef535ca681a03811e43b6faaa" src="https://github.com/yueh0607/FFramework/assets/102401735/ec94a6f2-a7be-44ac-8a20-924ce37fd6dc">
 <img width="960" alt="d9b522d95e215cfd16d062cc9e8c8ec" src="https://github.com/yueh0607/FFramework/assets/102401735/95f0c23b-a708-4bb8-8698-d54729f3131b">
+
 # Contributors
-[Click Here](https://github.com/yueh0607/FFramework/main/Contributors.md)
+
+[Click Here](https://github.com/yueh0607/FFramework/blob/main/Contributors.md)

@@ -15,6 +15,7 @@ namespace FFramework
             return Delay(TimeSpan.FromSeconds(seconds));
         }
 
+
         public static FTask Delay(TimeSpan span)
         {
             DelayPromise promise = Pool.Get<DelayPromise, DelayPromise.DelayPromisePoolable>();
@@ -32,6 +33,16 @@ namespace FFramework
                 await Delay(TimeSpan.Zero);
             }
         }
+
+        /// <summary>
+        /// 捕获本流程令牌
+        /// </summary>
+        /// <returns></returns>
+        public static FTaskCatchToken CatchToken()
+        {
+            return Pool.Get<FTaskCatchToken, FTaskCatchToken.FTaskCatchTokenPoolable>();
+        }
+       
 
         /// <summary>
         /// Task转入FTask，非必要不要使用，会使得FTask任务链的挂起功能受到损失（例如在执行此任务时不会暂停）

@@ -50,24 +50,26 @@ namespace FFramework.Internal
         //[DebuggerHidden]
         public readonly void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine
         {
-            awaiter.OnCompleted(stateMachine.MoveNext);
             if (awaiter is ITaskTokenProperty ftask)
             {
                 //if(ftask.GetToken()!=null)
                 //绑定当前任务的令牌
                 ftask.SetToken(((ITaskTokenProperty)task).GetToken());
             }
+            awaiter.OnCompleted(stateMachine.MoveNext);
+            
         }
 
         [SecuritySafeCritical, DebuggerHidden]
         public readonly void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine
         {
-            awaiter.OnCompleted(stateMachine.MoveNext);
+            
             if (awaiter is ITaskTokenProperty ftask)
             {
                 //if (ftask.GetToken() != null)
                     ftask.SetToken(((ITaskTokenProperty)task).GetToken());
             }
+            awaiter.OnCompleted(stateMachine.MoveNext);
         }
 
         [DebuggerHidden]
@@ -120,23 +122,25 @@ namespace FFramework.Internal
         [DebuggerHidden]
         public readonly void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine
         {
-            awaiter.OnCompleted(stateMachine.MoveNext);
+           
             if (awaiter is ITaskTokenProperty ftask)
             {
                 //if (ftask.GetToken() != null)
                     ftask.SetToken(((ITaskTokenProperty)task).GetToken());
             }
+            awaiter.OnCompleted(stateMachine.MoveNext);
         }
 
         [SecuritySafeCritical, DebuggerHidden]
         public readonly void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine
         {
-            awaiter.OnCompleted(stateMachine.MoveNext);
+            
             if (awaiter is ITaskTokenProperty ftask)
             {
                 //if (ftask.GetToken() != null)
                     ftask.SetToken(((ITaskTokenProperty)task).GetToken());
             }
+            awaiter.OnCompleted(stateMachine.MoveNext);
         }
 
         [DebuggerHidden]

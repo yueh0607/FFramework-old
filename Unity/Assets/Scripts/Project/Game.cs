@@ -53,16 +53,16 @@ public static class Game
     public static async FTask Process(UnityThread thread)
     {
         Debug.Log("GameProcess");
-        Test<int,string> t = new Game.Test<int,string>();
-        //GameCon = new GameController();
-        FTaskToken token = new FTaskToken();
-        DoSom().SetToken(token);
-        token.Yield();
-        await FTask.Delay(1);
-        token.Continue();
+        //Test<int,string> t = new Game.Test<int,string>();
+        GameCon = new GameController();
+        //FTaskToken token = new FTaskToken();
+        //DoSom().SetToken(token);
+        //token.Yield();
+        //await FTask.Delay(1);
+        //token.Continue();
 
-        await FTask.Delay(1);
-        Debug.Log(token.Status);
+        //await FTask.Delay(1);
+        //Debug.Log(token.Status);
         await FTask.CompletedTask;
     }
 

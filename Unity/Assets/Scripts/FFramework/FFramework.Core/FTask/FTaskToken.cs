@@ -1,41 +1,39 @@
 ﻿using System;
 using System.Runtime.ExceptionServices;
+using UnityEngine;
 
 namespace FFramework
 {
     public interface ITaskTokenStatusSetter
     {
+        /// <summary>
+        /// 设置令牌状态
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="anyParam"></param>
         void SetStatus(FTaskTokenStatus status, object anyParam);
+        /// <summary>
+        /// 保持挂起状态
+        /// </summary>
+        /// <param name="moveNext"></param>
+        void YieldHold(Action moveNext);
     }
 
     public class FTaskToken : FUnit, ITaskTokenStatusSetter
     {
-        bool inPool = false;
-        private FTaskToken() { }
-        ~FTaskToken()
-        {
-            if (!inPool)
-            {
-                throw new InvalidOperationException("FTaskToken must be recycled.");
-            }
-        }
 
+    
 
-        public static Action<ExceptionDispatchInfo> ErrorHandler = null;
-
+        /// <summary>
+        /// 令牌状态
+        /// </summary>
         FTaskTokenStatus status = FTaskTokenStatus.Pending;
 
         /// <summary>
-        /// 令牌预期状态
+        /// 令牌状态
         /// </summary>
         public FTaskTokenStatus Status => status;
 
-        private ExceptionDispatchInfo failedLog = null;
-
-        /// <summary>
-        /// 如果Status为Faulted，此属性将包含异常信息，否则为null
-        /// </summary>
-        public ExceptionDispatchInfo FailedException => failedLog;
 
         public event Action OnContinue = null;
 
@@ -78,6 +76,8 @@ namespace FFramework
                 throw new InvalidOperationException($"Illegal suspension(from {status} to {FTaskTokenStatus.Yield})");
 
             status = FTaskTokenStatus.Pending;
+            YieldState?.Invoke();
+            YieldState = null;
             OnContinue?.Invoke();
         }
 
@@ -89,12 +89,14 @@ namespace FFramework
         /// <param name="anyParam"></param>
         void ITaskTokenStatusSetter.SetStatus(FTaskTokenStatus status, object anyParam)
         {
-            if (status == FTaskTokenStatus.Faulted)
-            {
-                failedLog = anyParam as ExceptionDispatchInfo;
-                ErrorHandler?.Invoke(failedLog);
-            }
             this.status = status;
+        }
+
+
+        private Action YieldState = null;
+        void ITaskTokenStatusSetter.YieldHold(Action moveNext)
+        {
+            YieldState = moveNext;
         }
 
         public class FTaskTokenPoolable : IPoolable<FTaskToken>
@@ -113,14 +115,12 @@ namespace FFramework
 
             void IPoolable<FTaskToken>.OnGet(FTaskToken obj)
             {
-                obj.inPool = false;
+     
             }
 
             void IPoolable<FTaskToken>.OnSet(FTaskToken obj)
             {
-                obj.inPool = true;
                 obj.status = FTaskTokenStatus.Pending;
-                obj.failedLog = null;
                 obj.OnCancel = null;
                 obj.OnYield = null;
                 obj.OnContinue = null;

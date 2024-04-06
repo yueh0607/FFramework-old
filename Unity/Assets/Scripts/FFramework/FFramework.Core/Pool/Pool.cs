@@ -1,21 +1,7 @@
 
-/* 项目“Assembly-CSharp.Player”的未合并的更改
-在此之前:
-using System;
-在此之后:
-using FFramework.Internal;
-using System;
-*/
 using FFramework.Internal;
 using System;
 using System.Collections.Generic;
-/* 项目“Assembly-CSharp.Player”的未合并的更改
-在此之前:
-using UnityEngine;
-using FFramework.Internal;
-在此之后:
-using UnityEngine;
-*/
 
 
 namespace FFramework
@@ -35,7 +21,17 @@ namespace FFramework
             if (!pools.ContainsKey(typeof(T)))
                 throw new InvalidOperationException("No such pool");
 
+#if UNITY_EDITOR
+            var result = (T)pools[typeof(T)].Get();
+            if (result is FUnit unit)
+            {
+                unit.IsInPool = false;
+            }
+            return result;
+#else
+
             return (T)pools[typeof(T)].Get();
+#endif
         }
 
         /// <summary>
@@ -45,7 +41,16 @@ namespace FFramework
         public static T Get<T, K>() where K : IPoolable<T>, new()
         {
             Pool.Create(new K());
+#if UNITY_EDITOR
+            var result = (T)pools[typeof(T)].Get();
+            if (result is FUnit unit)
+            {
+                unit.IsInPool = false;
+            }
+            return result;
+#else
             return (T)pools[typeof(T)].Get();
+#endif
         }
 
 
@@ -58,7 +63,15 @@ namespace FFramework
             if (!pools.ContainsKey(typeof(T)))
                 throw new InvalidOperationException("No such pool");
             if (obj == null) throw new NullReferenceException();
+
+#if UNITY_EDITOR
+            if(obj is FUnit unit)
+            {
+                unit.IsInPool = true;
+            }
+#endif
             pools[typeof(T)].Set(obj);
+
         }
         /// <summary>
         /// 放置一个对象
@@ -68,7 +81,14 @@ namespace FFramework
         {
             Pool.Create(new K());
             if (obj == null) throw new NullReferenceException();
+#if UNITY_EDITOR
+            if(obj is FUnit unit)
+            {
+                unit.IsInPool = true;
+            }
+#endif
             pools[typeof(T)].Set(obj);
+
         }
 
         /// <summary>

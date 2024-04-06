@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,14 +9,27 @@ namespace FFramework
     public partial class FTask
     {
         private static readonly FTaskCompleted completed = new FTaskCompleted();
+
+        /// <summary>
+        /// 已经完成的任务
+        /// </summary>
         public static FTaskCompleted CompletedTask => completed;
 
+        /// <summary>
+        /// 推迟指定秒
+        /// </summary>
+        /// <param name="seconds"></param>
+        /// <returns></returns>
         public static FTask Delay(float seconds)
         {
             return Delay(TimeSpan.FromSeconds(seconds));
         }
 
-
+        /// <summary>
+        /// 推迟一定时间
+        /// </summary>
+        /// <param name="span"></param>
+        /// <returns></returns>
         public static FTask Delay(TimeSpan span)
         {
             DelayPromise promise = Pool.Get<DelayPromise, DelayPromise.DelayPromisePoolable>();
@@ -25,6 +39,11 @@ namespace FFramework
             return task;
         }
 
+        /// <summary>
+        /// 推迟X帧，1为等待当前帧结束
+        /// </summary>
+        /// <param name="frameCount"></param>
+        /// <returns></returns>
         public static async FTask DelayFrame(int frameCount = 1)
         {
             await FTask.CompletedTask;
@@ -42,7 +61,7 @@ namespace FFramework
         {
             return Pool.Get<FTaskCatchToken, FTaskCatchToken.FTaskCatchTokenPoolable>();
         }
-       
+    
 
         /// <summary>
         /// Task转入FTask，非必要不要使用，会使得FTask任务链的挂起功能受到损失（例如在执行此任务时不会暂停）
@@ -141,6 +160,27 @@ namespace FFramework
             promise.CombineCall(task, tasks, 1);
             return task;
         }
+        /// <summary>
+        /// 等待全部任务完成
+        /// </summary>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+        public static FTask WaitAll(params FTask[] tasks)
+        {
+            return WaitAll(tasks.ToList());
+        }
+        /// <summary>
+        /// 等待任意一个任务完成
+        /// </summary>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+        public static FTask WaitAny(params FTask[] tasks)
+        {
+            return WaitAny(tasks.ToList());
+        }
+
+
+
     }
 
     public static class FTaskThisEx
@@ -163,7 +203,7 @@ namespace FFramework
         }
 
         /// <summary>
-        /// 令FTask在后台以协程方式运行
+        /// 令FTask在后台以协程方式运行(开启未运行的task)
         /// </summary>
         /// <param name="task"></param>
         public static void Coroutine(this FTask task)
@@ -185,6 +225,25 @@ namespace FFramework
                 await task;
             }
             DoAsync().Forget();
+        }
+
+        /// <summary>
+        /// 设置令牌
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="token"></param>
+        public static void SetToken(this FTask task , FTaskToken token)
+        {
+            ((ITaskTokenHolder)task).SetToken(token);
+            IChildTaskHolder deepestTask = task.GetAwaiter();
+            while(true)
+            {
+                var nextLayerTask = deepestTask.GetChildTask();
+                if (nextLayerTask is IChildTaskHolder nextLayerHolder)
+                    deepestTask = nextLayerHolder;
+                else break;
+            }
+            deepestTask.GetChildTask().SetToken(token);
         }
     }
 }

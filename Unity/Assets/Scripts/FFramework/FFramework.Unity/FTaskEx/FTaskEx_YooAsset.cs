@@ -14,7 +14,6 @@ public static class FTaskEx
         FTaskSetResultSource<AssetHandle> source = FTaskSetResultSource<AssetHandle>.GetFromPool();
         source.Task = task;
         operationBase.Completed += source.CompleteAction;
-
         return task.GetAwaiter();
     }
     public static FTaskAwaiter GetAwaiter(this YooAsset.AsyncOperationBase operationBase)
@@ -23,7 +22,7 @@ public static class FTaskEx
         FTaskSetResultSource<AsyncOperationBase> source = FTaskSetResultSource<AsyncOperationBase>.GetFromPool();
         source.Task = task;
         operationBase.Completed += source.CompleteAction;
-        
+       
         return task.GetAwaiter();
     }
 }

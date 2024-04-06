@@ -10,8 +10,8 @@ namespace FFramework
         public static void Main()
         {
             Debug.Log($"热更程序集入口调用: {nameof(FFramework.EntryPoint.Main)}");
-            FTaskToken.ErrorHandler = (x) => x.Throw();
-            UnityGlobal.GameAwake().Coroutine();
+            FTask.ErrorHandler = (x) => x.Throw();
+            UnityGlobal.GameAwake().Forget();
         }
     }
 }

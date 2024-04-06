@@ -8,7 +8,7 @@ using YooAsset;
 
 
 
-public class Game
+public static class Game
 {
     /// <summary>
     /// 初始化
@@ -16,7 +16,7 @@ public class Game
     /// <returns></returns>
     public static async FTask Initialize()
     {
-        
+
         //初始化YooAsset
         ResourcePackage defaultPackage = YooAssets.CreatePackage("GameArts");
         YooAssets.SetDefaultPackage(defaultPackage);
@@ -39,7 +39,10 @@ public class Game
         await FTask.CompletedTask;
     }
 
+    class Test<T,K> : FUnit
+    {
 
+    }
 
     public static GameController GameCon;
     /// <summary>
@@ -50,12 +53,31 @@ public class Game
     public static async FTask Process(UnityThread thread)
     {
         Debug.Log("GameProcess");
+        Test<int,string> t = new Game.Test<int,string>();
+        //GameCon = new GameController();
+        FTaskToken token = new FTaskToken();
+        DoSom().SetToken(token);
+        token.Yield();
+        await FTask.Delay(1);
+        token.Continue();
 
-        GameCon = new GameController();
-
-
-       
-
+        await FTask.Delay(1);
+        Debug.Log(token.Status);
         await FTask.CompletedTask;
+    }
+
+
+    static async FTask DoSom()
+    {
+        Debug.Log("HH1");
+        //await FTask.Delay(1);
+        Debug.Log("HH2");
+        var tokenCatch = await FTask.CatchToken();
+        Debug.Log("HH3");
+        Debug.Log(tokenCatch.Status);
+        await FTask.Delay(1);
+        Debug.Log("HH4");
+
+
     }
 }

@@ -1,11 +1,14 @@
 
+using System;
 using System.Diagnostics;
 
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 
 namespace FFramework
 {
-    public interface ITaskTokenProperty
+
+    public interface ITaskTokenHolder
     {
         /// <summary>
         /// 为对象设置令牌
@@ -21,12 +24,18 @@ namespace FFramework
 
 
     [AsyncMethodBuilder(typeof(Internal.FTaskMethodBuilder))]
-    public partial class FTask :FUnit, ITaskTokenProperty
+    public partial class FTask :FUnit, ITaskTokenHolder
     {
-        //等待器
+
         private readonly FTaskAwaiter awaiter;
 
         private FTaskToken token = null;
+
+        /// <summary>
+        /// 异常处理器
+        /// </summary>
+        public static Action<ExceptionDispatchInfo> ErrorHandler = null;
+
 
         /// <summary>
         /// 任务令牌，用于标识任务链的状态以及进行操作
@@ -82,7 +91,7 @@ namespace FFramework
         /// </summary>
         /// <param name="token"></param>
         [DebuggerHidden]
-        void ITaskTokenProperty.SetToken(FTaskToken token)
+        void ITaskTokenHolder.SetToken(FTaskToken token)
         {
             this.token = token;
         }
@@ -90,8 +99,7 @@ namespace FFramework
         /// 获取任务令牌（可能为null，不希望主动进行调用采用显实现）
         /// </summary>
         [DebuggerHidden]
-
-        FTaskToken ITaskTokenProperty.GetToken()
+        FTaskToken ITaskTokenHolder.GetToken()
         {
             return token;
         }
@@ -102,7 +110,7 @@ namespace FFramework
 
 
     [AsyncMethodBuilder(typeof(Internal.FTaskMethodBuilder<>))]
-    public partial class FTask<T> : FUnit, ITaskTokenProperty
+    public partial class FTask<T> : FUnit, ITaskTokenHolder
     {
         //等待器
         private readonly FTaskAwaiter<T> awaiter;
@@ -163,7 +171,7 @@ namespace FFramework
         /// </summary>
         /// <param name="token"></param>
         [DebuggerHidden]
-        void ITaskTokenProperty.SetToken(FTaskToken token)
+        void ITaskTokenHolder.SetToken(FTaskToken token)
         {
             this.token = token;
         }
@@ -171,7 +179,7 @@ namespace FFramework
         /// 获取任务令牌（可能为null，不希望主动进行调用采用显实现）
         /// </summary>
         [DebuggerHidden]
-        FTaskToken ITaskTokenProperty.GetToken()
+        FTaskToken ITaskTokenHolder.GetToken()
         {
             return token;
         }

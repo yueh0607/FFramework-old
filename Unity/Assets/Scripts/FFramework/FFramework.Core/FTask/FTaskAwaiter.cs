@@ -6,11 +6,17 @@ using System.Runtime.ExceptionServices;
 
 namespace FFramework
 {
-
-    public class FTaskAwaiter : ICriticalNotifyCompletion, IReset, ITaskTokenProperty
+    public interface IChildTaskHolder
     {
-        private Action continuation = null;
+        public ITaskTokenHolder GetChildTask();
+
+        public void SetChildTask(ITaskTokenHolder task);
+    }
+    public class FTaskAwaiter : ICriticalNotifyCompletion, IReset, ITaskTokenHolder,IChildTaskHolder
+    {
+        private object continuation = null;
         private readonly FTask task = null;
+
         [DebuggerHidden]
         public FTaskAwaiter(in FTask task)
         {
@@ -50,7 +56,7 @@ namespace FFramework
         [DebuggerHidden]
         public void GetResult()
         {
-            Pool.Set<FTask, FTask.FTaskPoolable>(task);
+
         }
 
         /// <summary>
@@ -60,8 +66,8 @@ namespace FFramework
         public void SetResult()
         {
             isCompleted = true;
-  
-            continuation?.Invoke();
+            ((Action)continuation)?.Invoke();
+            Pool.Set<FTask, FTask.FTaskPoolable>(task);
         }
 
         /// <summary>
@@ -71,10 +77,17 @@ namespace FFramework
         [DebuggerHidden]
         public void SetException(Exception exception)
         {
+            //捕获异常
             ExceptionDispatchInfo e = ExceptionDispatchInfo.Capture(exception);
+            continuation = e;
+
+            //设置令牌状态为失败
             if (task.Token != null)
                 ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Faulted, e);
-            else FTaskToken.ErrorHandler?.Invoke(e);
+            
+            else FTask.ErrorHandler?.Invoke(e);
+
+            Pool.Set<FTask, FTask.FTaskPoolable>(task);
         }
         /// <summary>
         /// 设置任务结果为取消并完成
@@ -83,8 +96,10 @@ namespace FFramework
         public void SetCanceled()
         {
             isCompleted = true;
+            //设置令牌为取消状态
             if (task.Token != null)
                 ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Cancelled, null);
+            //回收任务
             Pool.Set<FTask, FTask.FTaskPoolable>(task);
         }
 
@@ -96,6 +111,7 @@ namespace FFramework
         {
             continuation = null;
             isCompleted = false;
+            childTask = null;
         }
 
 
@@ -104,24 +120,35 @@ namespace FFramework
         /// </summary>
         /// <param name="token"></param>
         [DebuggerHidden]
-        void ITaskTokenProperty.SetToken(FTaskToken token)
+        void ITaskTokenHolder.SetToken(FTaskToken token)
         {
-            ((ITaskTokenProperty)task).SetToken(token);
+            ((ITaskTokenHolder)task).SetToken(token);
         }
         /// <summary>
         /// 获取任务令牌（可能为null，不希望主动进行调用采用显实现）
         /// </summary>
         [DebuggerHidden]
-        FTaskToken ITaskTokenProperty.GetToken()
+        FTaskToken ITaskTokenHolder.GetToken()
         {
-            return ((ITaskTokenProperty)task).GetToken();
+            return ((ITaskTokenHolder)task).GetToken();
         }
 
+        private ITaskTokenHolder childTask = null;
+        [DebuggerHidden]
+        ITaskTokenHolder IChildTaskHolder.GetChildTask()
+        {
+            return childTask;
+        }
+        [DebuggerHidden]
+        void IChildTaskHolder.SetChildTask(ITaskTokenHolder task)
+        {
+            childTask = task;
+        }
     }
 
-    public class FTaskAwaiter<T> : ICriticalNotifyCompletion, IReset, ITaskTokenProperty
+    public class FTaskAwaiter<T> : ICriticalNotifyCompletion, IReset, ITaskTokenHolder,IChildTaskHolder
     {
-        private Action continuation = null;
+        private object continuation = null;
         private readonly FTask<T> task = null;
         [DebuggerHidden]
         public FTaskAwaiter(in FTask<T> task)
@@ -156,7 +183,6 @@ namespace FFramework
 
         private bool isCompleted = false;
 
-
         private T result = default;
         /// <summary>
         /// 用于返回Task执行的结果（注意此方法将由编译器生成到代码，不需要开发者进行调用）
@@ -164,9 +190,7 @@ namespace FFramework
         [DebuggerHidden]
         public T GetResult()
         {
-            T resultLocal = this.result;
-            Pool.Set<FTask<T>, FTask<T>.FTaskPoolable>(task);
-            return resultLocal;
+            return result;
         }
 
         /// <summary>
@@ -177,8 +201,8 @@ namespace FFramework
         {
             this.result = result;
             isCompleted = true;
-            continuation?.Invoke();
-
+            ((Action)continuation)?.Invoke();
+            Pool.Set<FTask<T>, FTask<T>.FTaskPoolable>(task);
         }
 
         /// <summary>
@@ -188,16 +212,19 @@ namespace FFramework
         [DebuggerHidden]
         public void SetException(Exception exception)
         {
+            result = default;
             ExceptionDispatchInfo e = ExceptionDispatchInfo.Capture(exception);
+            continuation = e;
             if (task.Token != null)
                 ((ITaskTokenStatusSetter)task.Token).SetStatus(FTaskTokenStatus.Faulted, e);
-            else FTaskToken.ErrorHandler?.Invoke(e);
+            else FTask.ErrorHandler?.Invoke(e);
+            Pool.Set<FTask<T>, FTask<T>.FTaskPoolable>(task);
         }
         /// <summary>
         /// 设置任务结果为取消并完成
         /// </summary>
         [DebuggerHidden]
-        public void SetCancelled()
+        public void SetCanceled()
         {
             isCompleted = true;
             if (task.Token != null)
@@ -211,9 +238,9 @@ namespace FFramework
         [DebuggerHidden]
         void IReset.Reset()
         {
-            result = default;
             continuation = null;
             isCompleted = false;
+            childTask = null;
         }
 
 
@@ -222,18 +249,30 @@ namespace FFramework
         /// </summary>
         /// <param name="token"></param>
         [DebuggerHidden]
-        void ITaskTokenProperty.SetToken(FTaskToken token)
+        void ITaskTokenHolder.SetToken(FTaskToken token)
         {
-            ((ITaskTokenProperty)task).SetToken(token);
+            ((ITaskTokenHolder)task).SetToken(token);
         }
         /// <summary>
         /// 获取任务令牌（可能为null，不希望主动进行调用采用显实现）
         /// </summary>
         [DebuggerHidden]
-        FTaskToken ITaskTokenProperty.GetToken()
+        FTaskToken ITaskTokenHolder.GetToken()
         {
-            return ((ITaskTokenProperty)task).GetToken();
+            return ((ITaskTokenHolder)task).GetToken();
         }
 
+        private ITaskTokenHolder childTask = null;
+        [DebuggerHidden]
+        ITaskTokenHolder IChildTaskHolder.GetChildTask()
+        {
+            return childTask;
+        }
+        [DebuggerHidden]
+
+        void IChildTaskHolder.SetChildTask(ITaskTokenHolder task)
+        {
+            childTask = task;
+        }
     }
 }

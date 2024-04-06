@@ -20,7 +20,7 @@ namespace FFramework.FUnityEditor
             {
                 if (projectPath == null)
                 {
-                    projectPath = Application.dataPath.Substring(0, Application.dataPath.Length - "/Assets".Length);
+                    projectPath = new DirectoryInfo(Application.dataPath).Parent.FullName;
                 }
                 return projectPath;
             }

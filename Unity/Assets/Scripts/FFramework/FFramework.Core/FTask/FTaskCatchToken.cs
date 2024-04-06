@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace FFramework
 {
-    public partial class FTaskCatchToken : FUnit, ITaskTokenProperty,ICriticalNotifyCompletion
+    public partial class FTaskCatchToken : FUnit, ITaskTokenHolder,ICriticalNotifyCompletion
     {
 
         private FTaskToken token = null;
@@ -62,28 +62,31 @@ namespace FFramework
         /// </summary>
         /// <param name="token"></param>
         [DebuggerHidden]
-        void ITaskTokenProperty.SetToken(FTaskToken token)
+        void ITaskTokenHolder.SetToken(FTaskToken token)
         {
             this.token = token;
+            if (token != null)
+                continuation?.Invoke();
         }
         /// <summary>
         /// 获取任务令牌（可能为null，不希望主动进行调用采用显实现）
         /// </summary>
         [DebuggerHidden]
 
-        FTaskToken ITaskTokenProperty.GetToken()
+        FTaskToken ITaskTokenHolder.GetToken()
         {
             return token;
         }
 
+        public Action continuation;
         void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation)
         {
-            continuation?.Invoke();
+            this.continuation = continuation; 
         }
 
         void INotifyCompletion.OnCompleted(Action continuation)
         {
-            continuation?.Invoke();
+            this.continuation = continuation;
         }
     }
 }

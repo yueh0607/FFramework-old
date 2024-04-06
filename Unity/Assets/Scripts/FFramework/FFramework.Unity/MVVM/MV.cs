@@ -27,6 +27,7 @@ namespace FFramework.MVVM
         private static Dictionary<Type, AssetHandle> prefabCache = new Dictionary<Type, AssetHandle>();
         private static Dictionary<Type, Spawner> spawners = new Dictionary<Type, Spawner>();
         private static Dictionary<Type, Dictionary<long, IModel>> models = new Dictionary<Type, Dictionary<long, IModel>>();
+        
         /// <summary>
         /// 预制体资源包
         /// </summary>
